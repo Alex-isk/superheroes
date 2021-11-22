@@ -2,6 +2,18 @@ name: superheroes
 description: A new Flutter application.
 
 
+
+#cupertino_icons: ^1.0.2
+#rxdart: ^0.27.1
+#provider: ^5.0.0
+#google_fonts: ^2.1.0
+#// Для запуска тестов добавить в dev_dependencies:
+#network_image_mock: ^2.0.1
+
+
+
+
+
 publish_to: 'none'
 
 
@@ -14,22 +26,31 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
+  google_fonts: ^2.1.0
+  cupertino_icons: ^1.0.4
   rxdart: ^0.27.2
   provider: ^6.0.1
 
 
 dev_dependencies:
+  network_image_mock: ^2.0.1
   flutter_test:
     sdk: flutter
 
 
-  flutter_lints: ^1.0.0
+  flutter_lints: ^1.0.4
 
 
 flutter:
+   uses-material-design: true
+   assets:
+     - assets/fonts/
+     - assets/images/
+#    - google_fonts/
+#    - assets/icons/
 
 
-  uses-material-design: true
+
+#  uses-material-design: true
 
 

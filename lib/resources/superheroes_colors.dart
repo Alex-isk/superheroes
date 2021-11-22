@@ -5,4 +5,8 @@ class SuperheroesColors {
 
   static const background = Color(0xFF10141E);
   static const blue = Color(0xFF00BCD4);
+  static const text = Color(0xFFFFFFFF);
+  static const backgroundGrey = Color.fromRGBO(44, 50, 67, 1);
+
+
 }
