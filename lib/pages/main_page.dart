@@ -106,7 +106,7 @@ class MainPageStateWidget extends StatelessWidget {
             return InfoWithButton(
               title: 'Error happened',
               assetImage: 'assets/images/hulk.png',
-              imageTopPadding: 174,
+              imageTopPadding: 9,
               buttonText: 'Search',
               subtitle: 'Please, try again',
               imageWidth: 108,
@@ -116,7 +116,7 @@ class MainPageStateWidget extends StatelessWidget {
             return InfoWithButton(
               title: 'Nothing found',
               assetImage: 'assets/images/superman.png',
-              imageTopPadding: 174,
+              imageTopPadding: 9,
               buttonText: 'Retry',
               subtitle: 'Search for something else',
               imageWidth: 108,
@@ -189,12 +189,11 @@ class NoFavorites extends StatelessWidget {
       alignment: Alignment.center,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        // mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Stack(
             children: [
               Container(
-                margin: EdgeInsets.only(left: 126, top: 165, right: 126),
                 width: 108,
                 height: 108,
                 decoration: BoxDecoration(
@@ -203,8 +202,8 @@ class NoFavorites extends StatelessWidget {
                   color: SuperheroesColors.blue,
                 ),
               ),
-              Padding(
-                  padding: EdgeInsets.only(left: 126, top: 174, right: 126),  // top: 9 (?)
+              Padding(             // color: Colors.amber,
+                padding: EdgeInsets.only(top: 9),
                 child: Image.asset(
                   'assets/images/ironman.png',
                   width: 108,

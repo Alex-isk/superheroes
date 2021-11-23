@@ -34,35 +34,29 @@ class InfoWithButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
       Stack(
+        // alignment: Alignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(
-                left: 126, top: 165, right: 126),
-            child: Container(
-              width: 108,
-              height: 108,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(54),
-                color: SuperheroesColors.blue,
-              ),
+          Container(
+            width: 108,
+            height: 108,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              // borderRadius: BorderRadius.circular(54),
+              color: SuperheroesColors.blue,
             ),
           ),
-          Container(
-            // alignment: Alignment.center,
-            // color: Colors.amber,
-            child: Padding(
-              padding: EdgeInsets.only(
-                  left: 126, top: imageTopPadding, right: 126),
-                  // left: 126, top: 174, right: 126),
-              child: Image.asset(assetImage,
-                // 'assets/images/hulk.png',
-                  width: imageWidth,
-                  height: imageHeight,
-                // width: 108,
-                // height: 119,
-              ),
+          Padding(
+            padding: EdgeInsets.only(
+              top: imageTopPadding,),
+            child: Image.asset(assetImage,
+              // 'assets/images/hulk.png',
+                width: imageWidth,
+                height: imageHeight,
+              // width: 108,
+              // height: 119,
             ),
           ),
         ],
