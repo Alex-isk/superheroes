@@ -30,8 +30,7 @@ class SuperheroPage extends StatelessWidget {
                   fontSize: 20,
                   color: SuperheroesColors.text),),
               SizedBox(height: 231),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30),
+              Padding( padding: const EdgeInsets.only(bottom: 30),
                 child: ActionButton(
                   text: 'Back',
                   onTap: () {Navigator.of(context).pop();},

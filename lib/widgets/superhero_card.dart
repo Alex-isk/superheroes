@@ -20,7 +20,6 @@ class SuperheroCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-
         height: 70,
         color: SuperheroesColors.backgroundGrey,
         child: Row(
@@ -32,7 +31,7 @@ class SuperheroCard extends StatelessWidget {
               width: 70,
               height: 70,
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
