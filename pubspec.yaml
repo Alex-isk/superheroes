@@ -44,11 +44,10 @@ dev_dependencies:
 flutter:
    uses-material-design: true
    assets:
-     - assets/fonts/
      - assets/images/
      - google_fonts/
 #    - assets/icons/
-
+#     - assets/fonts/
 
 
 #  uses-material-design: true
