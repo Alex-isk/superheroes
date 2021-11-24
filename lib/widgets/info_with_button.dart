@@ -72,7 +72,7 @@ class InfoWithButton extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
           Text(
             subtitle.toUpperCase(),
             // 'Search for something else'.toUpperCase(),
@@ -83,7 +83,7 @@ class InfoWithButton extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           ActionButton(
             onTap: () {},
             text: buttonText,
