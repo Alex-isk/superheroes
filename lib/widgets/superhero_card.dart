@@ -21,7 +21,11 @@ class SuperheroCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 70,
-        color: SuperheroesColors.backgroundGrey,
+        clipBehavior: Clip.antiAlias, // сглаживание углов
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8), // не сглаживает углы у картинок
+          color: SuperheroesColors.backgroundGrey,
+        ),
         child: Row(
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -7,11 +7,11 @@ import 'package:superheroes/pages/main_page.dart';
 
 class SuperheroPage extends StatelessWidget {
   final VoidCallback onTap;
-  final String text;
+  final String name;
 
   const SuperheroPage({Key? key,
     required this.onTap,
-    required this.text
+    required this.name
   }) : super(key: key);
 
   @override
@@ -25,7 +25,7 @@ class SuperheroPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                text, style: TextStyle(    // передать данные - "name" in text
+                name, style: TextStyle(    // передать данные - "name" in text
                   fontWeight: FontWeight.w600,
                   fontSize: 20,
                   color: SuperheroesColors.text),),
