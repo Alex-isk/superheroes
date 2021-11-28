@@ -283,7 +283,6 @@ class SuperheroesList extends StatelessWidget {
           }
           final List<SuperheroInfo> superheroes = snapshot.data!;
           return ListView.separated(
-
             itemCount: superheroes.length + 1,
                  //  название списка положим в список - будет скролится - в противном случае статичен
             itemBuilder: (BuildContext context, int index) {
