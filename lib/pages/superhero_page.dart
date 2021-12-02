@@ -8,10 +8,15 @@ import 'package:superheroes/pages/main_page.dart';
 class SuperheroPage extends StatelessWidget {
   final VoidCallback onTap;
   final String name;
+  // final String realName;  // add
+  // final String imageUrl;    // add
 
   const SuperheroPage({Key? key,
     required this.onTap,
-    required this.name
+    required this.name,
+    // required this.realName,    // add
+    // required this.imageUrl    // add
+
   }) : super(key: key);
 
   @override

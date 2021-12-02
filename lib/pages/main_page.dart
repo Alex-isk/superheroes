@@ -74,10 +74,16 @@ class _SearchWidgetState extends State<SearchWidget> {
     });
   }
 
+    Color _color = SuperheroesColors.white54;           // ??????
+
   @override
   Widget build(BuildContext context) {
     final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return TextField(
+      textCapitalization: TextCapitalization.words, //  заглавные у каждого слова
+      textInputAction: TextInputAction.search, // кнопки клвт - поиск, ок...
+      // keyboardType: TextInputType.name, // вид клавиатуры
+      cursorColor: SuperheroesColors.text,
       controller: controller,
       style: TextStyle(
         fontWeight: FontWeight.w400,
@@ -85,6 +91,8 @@ class _SearchWidgetState extends State<SearchWidget> {
         color: SuperheroesColors.text,
       ),
       decoration: InputDecoration(
+        // hintText: 'Search ',  // текст в поле поиска
+        // contentPadding: EdgeInsets.fromLTRB(...),
         filled: true,
         fillColor: SuperheroesColors.indigo75,
         isDense: true,
@@ -101,11 +109,15 @@ class _SearchWidgetState extends State<SearchWidget> {
           ),
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.0),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide(color: SuperheroesColors.white24),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(color: SuperheroesColors.text, width: 2.0),
         ),
       ),
     );
@@ -283,6 +295,8 @@ class SuperheroesList extends StatelessWidget {
           }
           final List<SuperheroInfo> superheroes = snapshot.data!;
           return ListView.separated(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,   //Автоматически скрывать клавиатуру при скролле
+
             itemCount: superheroes.length + 1,
                  //  название списка положим в список - будет скролится - в противном случае статичен
             itemBuilder: (BuildContext context, int index) {
@@ -304,13 +318,16 @@ class SuperheroesList extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: SuperheroCard(
-                  name: item.name,
-                  realName: item.realName,
-                  imageUrl: item.imageUrl,
+
+                  superheroInfo: item,  //add
+
+                  // name: item.name,
+                  // realName: item.realName,
+                  // imageUrl: item.imageUrl,
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (conext) => SuperheroPage(name: item.name, onTap: () {  },), // !!!!!!!!!
+                        builder: (conext) => SuperheroPage(name: item.name, onTap: () { },), // ...
                       ),
                     );
                   },
