@@ -83,7 +83,7 @@ class _SearchWidgetState extends State<SearchWidget> {
       textCapitalization: TextCapitalization.words, //  заглавные у каждого слова
       textInputAction: TextInputAction.search, // кнопки клвт - поиск, ок...
       // keyboardType: TextInputType.name, // вид клавиатуры
-      cursorColor: SuperheroesColors.text,
+      cursorColor: SuperheroesColors.text,  // цвет курсора
       controller: controller,
       style: TextStyle(
         fontWeight: FontWeight.w400,

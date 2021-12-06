@@ -42,7 +42,7 @@ class MainBloc {
 
   void searchForSuperheroes(final String text) {
     stateSubject.add(MainPageState.loading);
-    searchSubscription = SearchDelegate(text).asStream().listen((searchResults) {
+    searchSubscription = search(text).asStream().listen((searchResults) {
       if (searchResults.isEmpty) {
         stateSubject.add(MainPageState.nothingFound);
       } else {
@@ -60,11 +60,24 @@ class MainBloc {
   Stream<List<SuperheroInfo>> observeSearchedSuperheroes() =>
       searchedSuperheroesSubject;
 
-  Future<List<SuperheroInfo>> SearchDelegate(final String text) async {      //// !!!!
-    await Future.delayed(Duration(seconds: 1));
-    //  метод delayed -> ждем сколько указано и возвращаем SuperheroInfo.mocked
-    return SuperheroInfo.mocked;
-  }
+
+
+
+
+  // Future<List<SuperheroInfo>> search(final String text) async {
+  //   await Future.delayed(Duration(seconds: 1)); //  метод delayed -> ждем сколько указано и возвращаем SuperheroInfo.mocked
+  //   return SuperheroInfo.mocked;
+
+
+    Future<List<SuperheroInfo>> search(final String text) async {
+      // await Future.delayed(Duration(seconds: 1));
+      return SuperheroInfo.mocked.where((superheroInfo) =>
+          superheroInfo.name.toLowerCase().contains(text.toLowerCase())).toList();
+    }
+
+
+
+
 
   Stream<MainPageState> observeMainPageState() => stateSubject;
 
