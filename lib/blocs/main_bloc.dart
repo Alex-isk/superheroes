@@ -24,7 +24,7 @@ class MainBloc {
       (searchedText, favorites) =>
           MainPageStateInfo(searchedText, favorites.isNotEmpty),
     ).listen((value) {
-      print('CURRENT TEXT CHANGET');
+      print('CHANGED $value');
       searchSubscription?.cancel();
       if (value.searchText.isEmpty) {
         if (value.haveFavorites) {
@@ -61,36 +61,43 @@ class MainBloc {
       searchedSuperheroesSubject;
 
 
-
-
-
   // Future<List<SuperheroInfo>> search(final String text) async {
-  //   await Future.delayed(Duration(seconds: 1)); //  метод delayed -> ждем сколько указано и возвращаем SuperheroInfo.mocked
+  //   await Future.delayed(Duration(seconds: 1));
+  //  метод delayed -> ждем сколько указано и возвращаем SuperheroInfo.mocked
   //   return SuperheroInfo.mocked;
 
 
     Future<List<SuperheroInfo>> search(final String text) async {
       // await Future.delayed(Duration(seconds: 1));
-      return SuperheroInfo.mocked.where((superheroInfo) =>
-          superheroInfo.name.toLowerCase().contains(text.toLowerCase())).toList();
+      return SuperheroInfo.mocked
+          .where((superheroInfo) => superheroInfo.name.toLowerCase()
+          .contains(text.toLowerCase()))
+          .toList();
     }
 
 
-
-
-
   Stream<MainPageState> observeMainPageState() => stateSubject;
+
+    void removeFavorite() {
+      final List<SuperheroInfo> currentFavorites = favoriteSuperheroesSubject.value;
+      if (currentFavorites.isEmpty) {
+        favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
+      } else {
+        favoriteSuperheroesSubject.add(currentFavorites.sublist(0, currentFavorites.length - 1));
+        // favoriteSuperheroesSubject.add(currentFavorites.take(currentFavorites.length -1).toList());
+      }
+        }
 
   void nextState() {
     final currentState = stateSubject.value;
     final nextState = MainPageState.values[
         (MainPageState.values.indexOf(currentState) + 1) %
             MainPageState.values.length];
-    stateSubject.sink.add(nextState);
+    stateSubject.add(nextState);    // stateSubject.sink.add(nextState);
   }
 
   void updateText(final String? text) {
-    currentTextSubject.add(text ?? " ");
+    currentTextSubject.add(text ?? "");
   }
 
   void dispose() {
@@ -120,7 +127,10 @@ class SuperheroInfo {
 
   
   const SuperheroInfo(
-      {required this.name, required this.realName, required this.imageUrl});
+      {required this.name,
+        required this.realName,
+        required this.imageUrl,
+      });
 
   // cmd + N ->  toString()  -> добавляем метод toString()
   // -> для того, чтобы при дебаге получать читабельный код ->

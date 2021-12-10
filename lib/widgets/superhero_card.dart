@@ -67,6 +67,16 @@ class SuperheroCard extends StatelessWidget {
 
 
 
+
+
+
+
+
+
+
+
+
+
 // class SuperheroCard extends StatelessWidget {
 //   final String name;
 //   final String realName;

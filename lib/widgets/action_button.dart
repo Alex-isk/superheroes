@@ -23,7 +23,8 @@ import 'package:superheroes/resources/superheroes_colors.dart';
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.fromLTRB(20, 8, 20, 8), // padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        // padding: EdgeInsets.fromLTRB(20, 8, 20, 8), // padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
         decoration: BoxDecoration(
           color: SuperheroesColors.blue,
           borderRadius: BorderRadius.circular(8),
@@ -32,7 +33,7 @@ import 'package:superheroes/resources/superheroes_colors.dart';
           text.toUpperCase(),
           style: TextStyle(
             fontWeight: FontWeight.w700,
-            letterSpacing: 0.25,            // межбуквенный интервал
+            // letterSpacing: 0.25,            // межбуквенный интервал
             // height: 20,                     // высота строки
             fontSize: 14,
             color: SuperheroesColors.text,

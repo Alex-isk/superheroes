@@ -26,8 +26,9 @@ class InfoWithButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        // mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
         children: [
           Stack(
             alignment: Alignment.topCenter,

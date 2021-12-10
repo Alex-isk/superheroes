@@ -13,7 +13,8 @@ class MainPage extends StatefulWidget {
   MainPage({Key? key}) : super(key: key);
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  // State<MainPage> createState() => _MainPageState();
+  _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
@@ -63,25 +64,35 @@ class SearchWidget extends StatefulWidget {
 class _SearchWidgetState extends State<SearchWidget> {
   final TextEditingController controller = TextEditingController();
 
+  bool haveSearchedText = false;
+
   @override
   void initState() {
     super.initState();
     SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
       final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
-      controller.addListener(
-        () => bloc.updateText(controller.text),
-      );
+      controller.addListener(() => bloc.updateText(controller.text));
+
+      // controller.addListener(() {
+      //   bloc.updateText(controller.text);
+      //   final haveText = controller.text.isNotEmpty;
+      //   if (haveSearchedText != haveText) {
+      //     setState(() {
+      //       haveSearchedText = haveText;
+      //     });
+      //   }
+      // });
     });
   }
 
-    Color _color = SuperheroesColors.white54;           // ??????
+    // Color _color = SuperheroesColors.white54;           // ??????
 
   @override
   Widget build(BuildContext context) {
-    final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
+    // final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return TextField(
-      textCapitalization: TextCapitalization.words, //  заглавные у каждого слова
-      textInputAction: TextInputAction.search, // кнопки клвт - поиск, ок...
+      textCapitalization: TextCapitalization.words, //  заглавные у каждого слова (подходит и name)
+      textInputAction: TextInputAction.search, // кнопки клвт - поиск или ок или ...
       // keyboardType: TextInputType.name, // вид клавиатуры
       cursorColor: SuperheroesColors.text,  // цвет курсора
       controller: controller,
@@ -117,12 +128,15 @@ class _SearchWidgetState extends State<SearchWidget> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: SuperheroesColors.text, width: 2.0),
+          borderSide: haveSearchedText        // при введении будет один текст - если нет6 то др
+              ? BorderSide(color: SuperheroesColors.text, width: 2.0)
+              : BorderSide(color: SuperheroesColors.white24, width: 2.0), // при введении рамочка белая
         ),
       ),
     );
   }
 }
+
 
 class MainPageStateWidget extends StatelessWidget {
   @override
@@ -141,11 +155,24 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.minSymbols:
             return MinSymbolsWidget();
           case MainPageState.noFavorites:
-            return NoFavoritesWidget();
+            return Stack(
+              children: [
+                NoFavoritesWidget(),
+                Align(alignment: Alignment.bottomCenter,
+                    child: ActionButton(text: "Remove", onTap: bloc.removeFavorite))     // поскольку в () не принимаются параметры
+                // ActionButton(text: "Remove", onTap: () => bloc.removeFavorite())   // идентичен, только др написание
+              ],
+            );
           case MainPageState.favorites:
-            return SuperheroesList(
-              title: 'Your favorites',
-              stream: bloc.observeSearchedSuperheroes(),
+            return Stack(
+              children: [
+                SuperheroesList(
+                  title: 'Your favorites',
+                  stream: bloc.observeSearchedSuperheroes(),),
+                Align(alignment: Alignment.bottomCenter,
+                    child: ActionButton(text: "Remove", onTap: bloc.removeFavorite))     // поскольку в () не принимаются параметры
+                // ActionButton(text: "Remove", onTap: () => bloc.removeFavorite())   // идентичен, только др написание
+              ],
             );
           case MainPageState.searchResults:
             return SuperheroesList(
@@ -167,108 +194,6 @@ class MainPageStateWidget extends StatelessWidget {
             );
         }
       },
-    );
-  }
-}
-
-class LoadingIndicator extends StatelessWidget {
-  const LoadingIndicator({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: EdgeInsets.only(top: 110),
-        child: CircularProgressIndicator(
-          color: SuperheroesColors.blue,
-          strokeWidth: 4,
-        ),
-      ),
-    );
-  }
-}
-
-class MinSymbolsWidget extends StatelessWidget {
-  const MinSymbolsWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: EdgeInsets.only(
-            top:
-                110), // padding: EdgeInsets.only(left: 16, top: 110, right: 16),
-        child: Text(
-          'Enter at least 3 symbols',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: SuperheroesColors.text,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class NoFavoritesWidget extends StatelessWidget {
-  const NoFavoritesWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: InfoWithButton(
-        title: 'No favorites yet',
-        subtitle: 'Search and add',
-        buttonText: 'Search',
-        assetImage: SuperheroesImages.ironMan,
-        imageHeight: 119,
-        imageWidth: 108,
-        imageTopPadding: 9,
-      ),
-    );
-  }
-}
-
-class NothingFoundWidget extends StatelessWidget {
-  const NothingFoundWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: InfoWithButton(
-        title: 'Nothing found',
-        assetImage: SuperheroesImages.hulk,
-        imageTopPadding: 16,
-        buttonText: 'Search',
-        subtitle: 'Search for something else',
-        imageWidth: 84,
-        imageHeight: 112,
-      ),
-    );
-  }
-}
-
-class LoadingErrorWidget extends StatelessWidget {
-  const LoadingErrorWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: InfoWithButton(
-        title: 'Error happened',
-        assetImage: SuperheroesImages.superMan,
-        imageTopPadding: 22,
-        buttonText: 'Retry',
-        subtitle: 'Please, try again',
-        imageWidth: 126,
-        imageHeight: 106,
-      ),
     );
   }
 }
@@ -298,11 +223,11 @@ class SuperheroesList extends StatelessWidget {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,   //Автоматически скрывать клавиатуру при скролле
 
             itemCount: superheroes.length + 1,
-                 //  название списка положим в список - будет скролится - в противном случае статичен
+            //  название списка положим в список - будет скролится - в противном случае статичен
             itemBuilder: (BuildContext context, int index) {
               if (index == 0) {
                 return Padding(
-                   padding: const EdgeInsets.only(left: 16, right: 16, top: 90, bottom: 12),
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 90, bottom: 12),
                   child: Text(
                     title,
                     // textAlign: TextAlign.start,
@@ -316,7 +241,8 @@ class SuperheroesList extends StatelessWidget {
               }
               final SuperheroInfo item = superheroes[index - 1];
               return Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
+                // padding: const EdgeInsets.only(left: 16, right: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: SuperheroCard(
 
                   superheroInfo: item,  //add
@@ -327,17 +253,136 @@ class SuperheroesList extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (conext) => SuperheroPage(name: item.name, onTap: () { },), // ...
+                        builder: (conext) => SuperheroPage(name: item.name), // ...
                       ),
                     );
                   },
                 ),
               );
-            }, separatorBuilder: (BuildContext context, int index) {
-              return const SizedBox(height: 8);
+            }, separatorBuilder: (BuildContext context, int index) {   // разделитель
+            return const SizedBox(height: 8);
           },
           );
         });
   }
 }
+
+
+class NoFavoritesWidget extends StatelessWidget {
+  // const NoFavoritesWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: InfoWithButton(
+        title: 'No favorites yet',
+        subtitle: 'Search and add',
+        buttonText: 'Search',
+        assetImage: SuperheroesImages.ironMan,
+        imageHeight: 119,
+        imageWidth: 108,
+        imageTopPadding: 9,
+      ),
+    );
+  }
+}
+
+
+class NothingFoundWidget extends StatelessWidget {
+  // const NothingFoundWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: InfoWithButton(
+        title: 'Nothing found',
+        assetImage: SuperheroesImages.hulk,
+        imageTopPadding: 16,
+        buttonText: 'Search',
+        subtitle: 'Search for something else',
+        imageWidth: 84,
+        imageHeight: 112,
+      ),
+    );
+  }
+}
+
+
+
+class LoadingErrorWidget extends StatelessWidget {
+  // const LoadingErrorWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: InfoWithButton(
+        title: 'Error happened',
+        assetImage: SuperheroesImages.superMan,
+        imageTopPadding: 22,
+        buttonText: 'Retry',
+        subtitle: 'Please, try again',
+        imageWidth: 126,
+        imageHeight: 106,
+      ),
+    );
+  }
+}
+
+
+class MinSymbolsWidget extends StatelessWidget {
+  const MinSymbolsWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: EdgeInsets.only(
+            top:
+            110), // padding: EdgeInsets.only(left: 16, top: 110, right: 16),
+        child: Text(
+          'Enter at least 3 symbols',
+          // textAlign: TextAlign.center,
+          style: TextStyle(
+            color: SuperheroesColors.text,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class LoadingIndicator extends StatelessWidget {
+  const LoadingIndicator({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: EdgeInsets.only(top: 110),
+        child: CircularProgressIndicator(
+          color: SuperheroesColors.blue,
+          strokeWidth: 4,
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 
