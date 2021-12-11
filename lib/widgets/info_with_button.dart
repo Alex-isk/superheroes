@@ -60,24 +60,21 @@ class InfoWithButton extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Text(
-              title,
-              // 'Nothing found',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: SuperheroesColors.text,
-                fontSize: 32,
-                fontWeight: FontWeight.w800,
-              ),
+          Text(
+            title,
+            // 'Nothing found',
+            // textAlign: TextAlign.center,
+            style: TextStyle(
+              color: SuperheroesColors.text,
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 20),
           Text(
             subtitle.toUpperCase(),
             // 'Search for something else'.toUpperCase(),
-            textAlign: TextAlign.center,
+            // textAlign: TextAlign.center,
             style: TextStyle(
               color: SuperheroesColors.text,
               fontSize: 16,

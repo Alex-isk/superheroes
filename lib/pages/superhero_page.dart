@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/widgets/action_button.dart';
 
-import 'package:superheroes/pages/main_page.dart';
 
 class SuperheroPage extends StatelessWidget {
   // final VoidCallback onTap;

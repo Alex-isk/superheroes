@@ -71,17 +71,17 @@ class _SearchWidgetState extends State<SearchWidget> {
     super.initState();
     SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
       final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
-      controller.addListener(() => bloc.updateText(controller.text));
+      // controller.addListener(() => bloc.updateText(controller.text));
 
-      // controller.addListener(() {
-      //   bloc.updateText(controller.text);
-      //   final haveText = controller.text.isNotEmpty;
-      //   if (haveSearchedText != haveText) {
-      //     setState(() {
-      //       haveSearchedText = haveText;
-      //     });
-      //   }
-      // });
+      controller.addListener(() {
+        bloc.updateText(controller.text);
+        final haveText = controller.text.isNotEmpty;
+        if (haveSearchedText != haveText) {
+          setState(() {
+            haveSearchedText = haveText;
+          });
+        }
+      });
     });
   }
 
@@ -120,17 +120,17 @@ class _SearchWidgetState extends State<SearchWidget> {
           ),
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: SuperheroesColors.white24),
+          borderRadius: BorderRadius.circular(8),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
           borderSide: haveSearchedText        // при введении будет один текст - если нет6 то др
-              ? BorderSide(color: SuperheroesColors.text, width: 2.0)
-              : BorderSide(color: SuperheroesColors.white24, width: 2.0), // при введении рамочка белая
+              ? BorderSide(color: SuperheroesColors.text, width: 2.0) // если есть текст в поиск запросе - цвет и толщина
+              : BorderSide(color: SuperheroesColors.white24, width: 2.0), // если нет
+          // borderSide: BorderSide(color: SuperheroesColors.white24),
         ),
       ),
     );
@@ -168,7 +168,7 @@ class MainPageStateWidget extends StatelessWidget {
               children: [
                 SuperheroesList(
                   title: 'Your favorites',
-                  stream: bloc.observeSearchedSuperheroes(),),
+                  stream: bloc.observeFavoriteSuperheroes(),),
                 Align(alignment: Alignment.bottomCenter,
                     child: ActionButton(text: "Remove", onTap: bloc.removeFavorite))     // поскольку в () не принимаются параметры
                 // ActionButton(text: "Remove", onTap: () => bloc.removeFavorite())   // идентичен, только др написание
@@ -177,7 +177,7 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.searchResults:
             return SuperheroesList(
               title: 'Search results',
-              stream: bloc.observeFavoriteSuperheroes(),
+              stream: bloc.observeSearchedSuperheroes(),
             );
           case MainPageState.nothingFound:
             return NothingFoundWidget();

@@ -19,7 +19,7 @@ class MainBloc {
 
     textSubscription =
         Rx.combineLatest2<String, List<SuperheroInfo>, MainPageStateInfo>(
-      currentTextSubject.distinct().debounceTime(Duration(microseconds: 500)),
+      currentTextSubject.distinct().debounceTime(Duration(milliseconds: 500)),
       favoriteSuperheroesSubject,
       (searchedText, favorites) =>
           MainPageStateInfo(searchedText, favorites.isNotEmpty),
@@ -84,7 +84,7 @@ class MainBloc {
         favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
       } else {
         favoriteSuperheroesSubject.add(currentFavorites.sublist(0, currentFavorites.length - 1));
-        // favoriteSuperheroesSubject.add(currentFavorites.take(currentFavorites.length -1).toList());
+        // favoriteSuperheroesSubject.add(currentFavorites.take(currentFavorites.length -1).toList()); // аналогично
       }
         }
 
