@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
-
 import 'action_button.dart';
 
 class InfoWithButton extends StatelessWidget {
@@ -26,8 +25,6 @@ class InfoWithButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-        // crossAxisAlignment: CrossAxisAlignment.center,
-        // mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
         children: [
           Stack(
