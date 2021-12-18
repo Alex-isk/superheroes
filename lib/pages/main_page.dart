@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
 import 'package:superheroes/pages/superhero_page.dart';
@@ -8,9 +9,11 @@ import 'package:superheroes/resources/superheroes_images.dart';
 import 'package:superheroes/widgets/action_button.dart';
 import 'package:superheroes/widgets/info_with_button.dart';
 import 'package:superheroes/widgets/superhero_card.dart';
+import 'package:http/http.dart' as http;
 
 class MainPage extends StatefulWidget {
-  MainPage({Key? key}) : super(key: key);
+  final http.Client? client;
+  MainPage({Key? key, this.client}) : super(key: key);
 
   @override
   // State<MainPage> createState() => _MainPageState();
@@ -18,7 +21,12 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final MainBloc bloc = MainBloc();
+  late MainBloc bloc;
+@override
+  void initState() {
+    super.initState();
+    bloc = MainBloc(client:  widget.client);
+  }
 
   @override
   Widget build(BuildContext context) {

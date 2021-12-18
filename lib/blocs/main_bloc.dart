@@ -18,7 +18,9 @@ class MainBloc {
   StreamSubscription? textSubscription;
   StreamSubscription? searchSubscription;
 
-  MainBloc() {
+  http.Client? client;
+
+  MainBloc({this.client}) {
     stateSubject.add(MainPageState.noFavorites);
 
     textSubscription =
@@ -74,14 +76,13 @@ class MainBloc {
     Future<List<SuperheroInfo>> search(final String text) async {
       await Future.delayed(Duration(seconds: 1));
       final token = dotenv.env['SUPERHERO_TOKEN'];
-      final response = await http.get(
+      final response = await (client ??= http.Client()).get(
           Uri.parse('https://superheroapi.com/api/$token/search/$text'));
       // print(response.statusCode);
       // print(response.reasonPhrase);
       // print(response.headers);
       // print(response.body);
       final decoded = json.decode(response.body);
-      print(decoded);
 
       if (decoded['response'] == 'success') {
         final List<dynamic> results = decoded['results'];
@@ -157,6 +158,8 @@ Stream<MainPageState> observeMainPageState() => stateSubject;
     currentTextSubject.close();
 
     textSubscription?.cancel();
+
+    client?.close();
   }
 }
 
