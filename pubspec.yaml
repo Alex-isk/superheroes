@@ -39,7 +39,6 @@ flutter:
      - google_fonts/
      - assets/images/
      - .env
-     -
 #    - assets/icons/
 #     - assets/fonts/s
 #  uses-material-design: true

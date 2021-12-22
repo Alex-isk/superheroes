@@ -2,9 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
+import 'package:superheroes/resources/superheroes_images.dart';
 
 class SuperheroCard extends StatelessWidget {
-  final SuperheroInfo superheroInfo;   // рефакторим - используем аналогичные данные из типа - SuperheroInfo
+  final SuperheroInfo superheroInfo; // рефакторим - используем аналогичные данные из типа - SuperheroInfo
   final VoidCallback onTap;
 
   const SuperheroCard({
@@ -21,13 +22,36 @@ class SuperheroCard extends StatelessWidget {
         height: 70,
         clipBehavior: Clip.antiAlias, // сглаживание углов
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8), // не сглаживает углы у картинок
+          borderRadius:
+              BorderRadius.circular(8), // не сглаживает углы у картинок
           color: SuperheroesColors.backgroundGrey,
         ),
         child: Row(
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CachedNetworkImage(imageUrl: superheroInfo.imageUrl, fit: BoxFit.cover, width: 70, height: 70,),
+            Container(
+                color: SuperheroesColors.white24,
+                height: 70, width: 70,
+                child: CachedNetworkImage(
+                  imageUrl: superheroInfo.imageUrl,
+                  fit: BoxFit.cover,
+                  width: 70, height: 70,
+                  progressIndicatorBuilder: (context, url, progress) {
+                    return Container(alignment: Alignment.center,
+                      height: 24, width: 24, color: SuperheroesColors.white24,
+                      child: CircularProgressIndicator(color: SuperheroesColors.blue,
+                        value: progress.progress, ///
+                      ),
+                    );},
+                      errorWidget: (context, url, error) {
+                    return Center(
+                      child: Image.asset(SuperheroesImages.unknownMan, width: 20, height: 62,
+                      fit: BoxFit.cover,  ///
+                      ),
+                    );
+                  },
+                ),
+            ),
             // Image.network(superheroInfo.imageUrl, fit: BoxFit.cover, width: 70, height: 70,),
             const SizedBox(width: 12),
             Expanded(
@@ -61,18 +85,6 @@ class SuperheroCard extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 // class SuperheroCard extends StatelessWidget {
 //   final String name;
@@ -143,8 +155,6 @@ class SuperheroCard extends StatelessWidget {
 //     );
 //   }
 // }
-
-
 
 // var1 =======================
 //

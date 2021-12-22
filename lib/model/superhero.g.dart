@@ -8,14 +8,18 @@ part of 'superhero.dart';
 
 Superhero _$SuperheroFromJson(Map<String, dynamic> json) {
   return Superhero(
-    json['name'] as String,
-    Biography.fromJson(json['biography'] as Map<String, dynamic>),
-    ServerImage.fromJson(json['image'] as Map<String, dynamic>),
+    name: json['name'] as String,
+    biography: Biography.fromJson(json['biography'] as Map<String, dynamic>),
+    image: ServerImage.fromJson(json['image'] as Map<String, dynamic>),
+    powerstats: Powerstats.fromJson(json['powerstats'] as Map<String, dynamic>),
+    id: json['id'] as String,
   );
 }
 
 Map<String, dynamic> _$SuperheroToJson(Superhero instance) => <String, dynamic>{
       'name': instance.name,
-      'biography': instance.biography,
-      'image': instance.image,
+      'biography': instance.biography.toJson(),
+      'image': instance.image.toJson(),
+      'powerstats': instance.powerstats.toJson(),
+      'id': instance.id,
     };
