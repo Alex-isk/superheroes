@@ -30,19 +30,20 @@ class SuperheroCard extends StatelessWidget {
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-                color: SuperheroesColors.white24,
+                color: Colors.white24,
                 height: 70, width: 70,
                 child: CachedNetworkImage(
                   imageUrl: superheroInfo.imageUrl,
-                  fit: BoxFit.cover,
                   width: 70, height: 70,
+                  fit: BoxFit.cover,
                   progressIndicatorBuilder: (context, url, progress) {
                     return Container(alignment: Alignment.center,
                       height: 24, width: 24, color: SuperheroesColors.white24,
                       child: CircularProgressIndicator(color: SuperheroesColors.blue,
-                        value: progress.progress, ///
+                        value: progress.progress,
                       ),
-                    );},
+                    );
+                    },
                       errorWidget: (context, url, error) {
                     return Center(
                       child: Image.asset(SuperheroesImages.unknownMan, width: 20, height: 62,

@@ -3,14 +3,19 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'biography.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.kebab, explicitToJson: true)
+@JsonSerializable()
 class Biography {
   final String fullName;
   final String alignment;
+  final List<String> aliases;
+  final String placeOfBirth;
 
    Biography({
       required this.fullName,
       required this.alignment,
+      required this.aliases,
+      required this.placeOfBirth,
+
    });
   // Biography(this.fullName, this.alignment);
 

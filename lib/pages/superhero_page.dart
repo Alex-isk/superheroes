@@ -1,57 +1,92 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:superheroes/model/biography.dart';
+import 'package:superheroes/model/powerstats.dart';
+import 'package:superheroes/model/server_image.dart';
+import 'package:superheroes/model/superhero.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/widgets/action_button.dart';
 
-
 class SuperheroPage extends StatelessWidget {
-  // final VoidCallback onTap;
-  final String name;
-  // final String realName;  // add
-  // final String imageUrl;    // add
+  final String id;
 
   const SuperheroPage({
     Key? key,
-    // required this.onTap,
-    required this.name,
-    // required this.realName,    // add
-    // required this.imageUrl    // add
+    required this.id,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final superhero = Superhero(
+      id: id,
+      name: 'Batman',
+      biography: Biography(
+        fullName: 'Batman Anatoevich',
+        alignment: 'good',
+        aliases: ['Batmanovich', 'Protector of the Realm'],
+        placeOfBirth: 'Russia, St. Peterburg',
+      ),
+      image: ServerImage(
+          'https://www.superherodb.com/pictures2/portraits/10/100/639.jpg'),
+      powerstats: Powerstats(
+        intelligence: '90',
+        strength: '80',
+        speed: '15',
+        durability: '45',
+        power: '100',
+        combat: '0',
+      ),
+    );
+
     return Scaffold(
       backgroundColor: SuperheroesColors.background,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Center(
-              child:
-                  // Column(
-                  //       mainAxisAlignment: MainAxisAlignment.end,
-                  //       crossAxisAlignment: CrossAxisAlignment.center,
-                  //       children: [
-                  Text(
-                name,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            stretch: true, // скролл
+            pinned: true, // сверху
+            floating: true, //при скролле вниз - картинка выезжает,
+            expandedHeight: 348, // выезжает по высоте
+            backgroundColor: SuperheroesColors.background, //цвет задника
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                superhero.name,
                 style: TextStyle(
-                    // передать данные - "name" in text
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                    color: SuperheroesColors.text),
+                  fontWeight: FontWeight.w800,
+                  color: SuperheroesColors.text,
+                  fontSize: 22,
+                ),
+              ),
+              centerTitle: true,  // по центру
+              background: CachedNetworkImage(
+                imageUrl: superhero.image.url,
+                fit: BoxFit.cover,
               ),
             ),
-            // SizedBox(height: 231),
-            // Padding( padding: const EdgeInsets.only(bottom: 30),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: ActionButton(
-                text: 'Back',
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
+          ),
+          SliverAppBar(
+            stretch: true, // скролл
+            pinned: true, // сверху
+            floating: true, //при скролле вниз - картинка выезжает,
+            expandedHeight: 348, // выезжает по высоте
+            backgroundColor: SuperheroesColors.background, //цвет задника
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                superhero.name,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: SuperheroesColors.text,
+                  fontSize: 22,
+                ),
               ),
-            )
-          ],
-        ),
+              centerTitle: true,  // по центру
+              background: CachedNetworkImage(
+                imageUrl: superhero.image.url,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ],
       ),
     );
     /* or

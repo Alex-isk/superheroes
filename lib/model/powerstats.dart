@@ -3,7 +3,7 @@
 
   part 'powerstats.g.dart';
 
-  @JsonSerializable(fieldRename: FieldRename.kebab, explicitToJson: true)
+  @JsonSerializable()
   class Powerstats {
   final String intelligence;
   final String strength;
