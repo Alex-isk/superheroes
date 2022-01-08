@@ -22,10 +22,10 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   late MainBloc bloc;
-@override
+  @override
   void initState() {
     super.initState();
-    bloc = MainBloc(client:  widget.client);
+    bloc = MainBloc(client: widget.client);
   }
 
   @override
@@ -63,30 +63,34 @@ class _MainPageContentState extends State<MainPageContent> {
 
   @override
   Widget build(BuildContext context) {
-
     return Stack(
       children: [
-        MainPageStateWidget(searchFieldFocusNode: searchFieldFocusNode,),
+        MainPageStateWidget(
+          searchFieldFocusNode: searchFieldFocusNode,
+        ),
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
-          child: SearchWidget(searchFieldFocusNode: searchFieldFocusNode,),
+          child: SearchWidget(
+            searchFieldFocusNode: searchFieldFocusNode,
+          ),
         ),
       ],
     );
   }
-    @override
-    void dispose() {       // dispose метод чтобы он потом не перехватывал метод
-      searchFieldFocusNode.dispose();
-      super.dispose();
-    }
 
-
+  @override
+  void dispose() {
+    // dispose метод чтобы он потом не перехватывал метод
+    searchFieldFocusNode.dispose();
+    super.dispose();
+  }
 }
 
 class SearchWidget extends StatefulWidget {
   final FocusNode searchFieldFocusNode;
 
-  const SearchWidget({Key? key,
+  const SearchWidget({
+    Key? key,
     required this.searchFieldFocusNode,
   }) : super(key: key);
   @override
@@ -117,17 +121,19 @@ class _SearchWidgetState extends State<SearchWidget> {
     });
   }
 
-    // Color _color = SuperheroesColors.white54;           // ??????
+  // Color _color = SuperheroesColors.white54;           // ??????
 
   @override
   Widget build(BuildContext context) {
     // final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return TextField(
       focusNode: widget.searchFieldFocusNode,
-      textCapitalization: TextCapitalization.words, //  заглавные у каждого слова (подходит и name)
-      textInputAction: TextInputAction.search, // кнопки клвт - поиск или ок или ...
+      textCapitalization: TextCapitalization
+          .words, //  заглавные у каждого слова (подходит и name)
+      textInputAction:
+          TextInputAction.search, // кнопки клвт - поиск или ок или ...
       // keyboardType: TextInputType.name, // вид клавиатуры
-      cursorColor: SuperheroesColors.text,  // цвет курсора
+      cursorColor: SuperheroesColors.text, // цвет курсора
       controller: controller,
       style: TextStyle(
         fontWeight: FontWeight.w400,
@@ -160,9 +166,14 @@ class _SearchWidgetState extends State<SearchWidget> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: haveSearchedText        // при введении будет один текст - если нет6 то др
-              ? BorderSide(color: SuperheroesColors.text, width: 2.0) // если есть текст в поиск запросе - цвет и толщина
-              : BorderSide(color: SuperheroesColors.white24, width: 2.0), // если нет
+          borderSide:
+              haveSearchedText // при введении будет один текст - если нет6 то др
+                  ? BorderSide(
+                      color: SuperheroesColors.text,
+                      width:
+                          2.0) // если есть текст в поиск запросе - цвет и толщина
+                  : BorderSide(
+                      color: SuperheroesColors.white24, width: 2.0), // если нет
           // borderSide: BorderSide(color: SuperheroesColors.white24),
         ),
       ),
@@ -170,11 +181,11 @@ class _SearchWidgetState extends State<SearchWidget> {
   }
 }
 
-
 class MainPageStateWidget extends StatelessWidget {
   final FocusNode searchFieldFocusNode;
 
-  const MainPageStateWidget({Key? key,
+  const MainPageStateWidget({
+    Key? key,
     required this.searchFieldFocusNode,
   }) : super(key: key);
 
@@ -194,32 +205,23 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.minSymbols:
             return MinSymbolsWidget();
           case MainPageState.noFavorites:
-            return Stack(
-              children: [
-                NoFavoritesWidget(searchFieldFocusNode: searchFieldFocusNode),
-                Align(alignment: Alignment.bottomCenter,
-                    child: ActionButton(text: "Remove", onTap: bloc.removeFavorite))     // поскольку в () не принимаются параметры
-                // ActionButton(text: "Remove", onTap: () => bloc.removeFavorite())   // идентичен, только др написание
-              ],
-            );
+            return NoFavoritesWidget(
+                searchFieldFocusNode: searchFieldFocusNode);
           case MainPageState.favorites:
-            return Stack(
-              children: [
-                SuperheroesList(
-                  title: 'Your favorites',
-                  stream: bloc.observeFavoriteSuperheroes(),),
-                Align(alignment: Alignment.bottomCenter,
-                    child: ActionButton(text: "Remove", onTap: bloc.removeFavorite))     // поскольку в () не принимаются параметры
-                // ActionButton(text: "Remove", onTap: () => bloc.removeFavorite())   // идентичен, только др написание
-              ],
+            return SuperheroesList(
+              title: 'Your favorites',
+              stream: bloc.observeFavoriteSuperheroes(),
             );
+
           case MainPageState.searchResults:
             return SuperheroesList(
               title: 'Search results',
               stream: bloc.observeSearchedSuperheroes(),
             );
           case MainPageState.nothingFound:
-            return NothingFoundWidget(searchFieldFocusNode: searchFieldFocusNode,);
+            return NothingFoundWidget(
+              searchFieldFocusNode: searchFieldFocusNode,
+            );
           case MainPageState.loadingError:
             return LoadingErrorWidget();
           default:
@@ -235,8 +237,6 @@ class MainPageStateWidget extends StatelessWidget {
   }
 }
 
-
-
 class SuperheroesList extends StatelessWidget {
   final String title;
   final Stream<List<SuperheroInfo>> stream;
@@ -250,65 +250,117 @@ class SuperheroesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<SuperheroInfo>>(
-        stream: stream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.data == null) {
-            return const SizedBox.shrink();
-          }
-          final List<SuperheroInfo> superheroes = snapshot.data!;
-          return ListView.separated(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,   //Автоматически скрывать клавиатуру при скролле
+      stream: stream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const SizedBox.shrink();
+        }
+        final List<SuperheroInfo> superheroes = snapshot.data!;
+        return ListView.separated(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
+              .onDrag, //Автоматически скрывать клавиатуру при скролле
 
-            itemCount: superheroes.length + 1,
-            //  название списка положим в список - будет скролится - в противном случае статичен
-            itemBuilder: (BuildContext context, int index) {
-              if (index == 0) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16, top: 90, bottom: 12),
-                  child: Text(
-                    title,
-                    // textAlign: TextAlign.start,
-                    style: TextStyle(
-                      color: SuperheroesColors.text,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                );
-              }
-              final SuperheroInfo item = superheroes[index - 1];
-              return Padding(
-                // padding: const EdgeInsets.only(left: 16, right: 16),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SuperheroCard(
-
-                  superheroInfo: item,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (conext) => SuperheroPage(id: item.id), // ...
-                      ),
-                    );
-                  },
-                ),
-              );
-            }, separatorBuilder: (BuildContext context, int index) {   // разделитель
+          itemCount: superheroes.length + 1,
+          //  название списка положим в список - будет скролится - в противном случае статичен
+          itemBuilder: (BuildContext context, int index) {
+            if (index == 0) {
+              return ListTitleWidget(title: title);
+            }
+            final SuperheroInfo item = superheroes[index - 1];
+            return ListTile(superhero: item);
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            // разделитель
             return const SizedBox(height: 8);
           },
-          );
-        });
+        );
+      },
+    );
   }
 }
 
+class ListTile extends StatelessWidget {
+  final SuperheroInfo superhero;
+
+  const ListTile({
+    Key? key,
+    required this.superhero,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
+
+    return Padding(
+      // padding: const EdgeInsets.only(left: 16, right: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Dismissible(
+        key: ValueKey(superhero.id),
+        child: SuperheroCard(
+          superheroInfo: superhero,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (conext) => SuperheroPage(id: superhero.id), // ...
+              ),
+            );
+          },
+        ),
+        background: Container(
+          height: 70,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: SuperheroesColors.red,
+          ),
+          child: Text(
+            'Remove from favorites'.toUpperCase(),
+            style: TextStyle(
+              fontSize: 12,
+              color: SuperheroesColors.white24,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        onDismissed: (_) => bloc.removeFromFavorites(superhero.id),
+      ),
+    );
+  }
+}
+
+class ListTitleWidget extends StatelessWidget {
+  const ListTitleWidget({
+    Key? key,
+    required this.title,
+  }) : super(key: key);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 90, bottom: 12),
+      child: Text(
+        title,
+        // textAlign: TextAlign.start,
+        style: TextStyle(
+          color: SuperheroesColors.text,
+          fontSize: 24,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
 
 class NoFavoritesWidget extends StatelessWidget {
   // const NoFavoritesWidget({Key? key}) : super(key: key);
-final FocusNode searchFieldFocusNode;
+  final FocusNode searchFieldFocusNode;
 
-  const NoFavoritesWidget({Key? key,
+  const NoFavoritesWidget({
+    Key? key,
     required this.searchFieldFocusNode,
   }) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -327,14 +379,14 @@ final FocusNode searchFieldFocusNode;
   }
 }
 
-
 class NothingFoundWidget extends StatelessWidget {
   // const NothingFoundWidget({Key? key}) : super(key: key);
-final FocusNode searchFieldFocusNode;
+  final FocusNode searchFieldFocusNode;
 
-  const NothingFoundWidget({Key? key, required this.searchFieldFocusNode,
+  const NothingFoundWidget({
+    Key? key,
+    required this.searchFieldFocusNode,
   }) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -353,15 +405,12 @@ final FocusNode searchFieldFocusNode;
   }
 }
 
-
-
 class LoadingErrorWidget extends StatelessWidget {
   // const LoadingErrorWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of<MainBloc>(context, listen: false);
-
 
     return Center(
       child: InfoWithButton(
@@ -372,12 +421,11 @@ class LoadingErrorWidget extends StatelessWidget {
         subtitle: 'Please, try again',
         imageWidth: 126,
         imageHeight: 106,
-        onTap: bloc.retry,   // равен  onTap: () => bloc.retry(),
+        onTap: bloc.retry, // равен  onTap: () => bloc.retry(),
       ),
     );
   }
 }
-
 
 class MinSymbolsWidget extends StatelessWidget {
   const MinSymbolsWidget({Key? key}) : super(key: key);
@@ -389,7 +437,7 @@ class MinSymbolsWidget extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(
             top:
-            110), // padding: EdgeInsets.only(left: 16, top: 110, right: 16),
+                110), // padding: EdgeInsets.only(left: 16, top: 110, right: 16),
         child: Text(
           'Enter at least 3 symbols',
           // textAlign: TextAlign.center,
@@ -403,7 +451,6 @@ class MinSymbolsWidget extends StatelessWidget {
     );
   }
 }
-
 
 class LoadingIndicator extends StatelessWidget {
   const LoadingIndicator({
@@ -424,15 +471,3 @@ class LoadingIndicator extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
