@@ -281,10 +281,11 @@ class SuperheroesList extends StatelessWidget {
 
 class ListTile extends StatelessWidget {
   final SuperheroInfo superhero;
+  final ableToSwipe bool;
 
   const ListTile({
     Key? key,
-    required this.superhero,
+    required this.superhero, required this.bool,
   }) : super(key: key);
 
   @override
