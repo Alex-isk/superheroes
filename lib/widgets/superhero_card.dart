@@ -146,7 +146,6 @@ class _AvatarWidget extends StatelessWidget {
               SuperheroesImages.unknownMan, width: 20, height: 62,
               fit: BoxFit.cover,
 
-              ///
             ),
           );
         },

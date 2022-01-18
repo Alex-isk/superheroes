@@ -131,3 +131,62 @@ class SuperheroBloc {
     superheroSubject.close();
   }
 }
+
+
+//
+// observeSuperheroPageState()
+// class MainPageStateWidget extends StatelessWidget {
+//   final FocusNode searchFieldFocusNode;
+//
+//   const MainPageStateWidget({
+//     Key? key,
+//     required this.searchFieldFocusNode,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
+//     return StreamBuilder<MainPageState>(
+//       stream: bloc.observeMainPageState(),
+//       builder: (context, snapshot) {
+//         if (!snapshot.hasData || snapshot.data == null) {
+//           return SizedBox();
+//         }
+//         final MainPageState state = snapshot.data!;
+//         switch (state) {
+//           case MainPageState.loading:
+//             return LoadingIndicator();
+//           case MainPageState.minSymbols:
+//             return MinSymbolsWidget();
+//           case MainPageState.noFavorites:
+//             return NoFavoritesWidget(
+//                 searchFieldFocusNode: searchFieldFocusNode);
+//           case MainPageState.favorites:
+//             return SuperheroesList(
+//               title: 'Your favorites',
+//               stream: bloc.observeFavoriteSuperheroes(),
+//             );
+//
+//           case MainPageState.searchResults:
+//             return SuperheroesList(
+//               title: 'Search results',
+//               stream: bloc.observeSearchedSuperheroes(),
+//             );
+//           case MainPageState.nothingFound:
+//             return NothingFoundWidget(
+//               searchFieldFocusNode: searchFieldFocusNode,
+//             );
+//           case MainPageState.loadingError:
+//             return LoadingErrorWidget();
+//           default:
+//             return Center(
+//               child: Text(
+//                 state.toString(),
+//                 style: TextStyle(color: SuperheroesColors.text),
+//               ),
+//             );
+//         }
+//       },
+//     );
+//   }
+// }

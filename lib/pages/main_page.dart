@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
@@ -85,6 +86,7 @@ class _MainPageContentState extends State<MainPageContent> {
     super.dispose();
   }
 }
+
 
 class SearchWidget extends StatefulWidget {
   final FocusNode searchFieldFocusNode;
@@ -267,7 +269,18 @@ class SuperheroesList extends StatelessWidget {
               return ListTitleWidget(title: title);
             }
             final SuperheroInfo item = superheroes[index - 1];
-            return ListTile(superhero: item);
+
+            return ListTile(superhero: item,ableToSwipe: true);
+
+            // return ListTile(superhero: item,
+            //    ableToSwipe:
+            //    if (MainPageState.favorites) {
+            //       return true;
+            //   } else (MainPageState.searchResults) {
+            //       return false;
+            //   }
+            //   );
+
           },
           separatorBuilder: (BuildContext context, int index) {
             // разделитель
@@ -279,24 +292,71 @@ class SuperheroesList extends StatelessWidget {
   }
 }
 
+
+
 class ListTile extends StatelessWidget {
   final SuperheroInfo superhero;
-  final ableToSwipe bool;
+  final bool ableToSwipe ;
 
   const ListTile({
     Key? key,
-    required this.superhero, required this.bool,
+    required this.superhero, required this.ableToSwipe,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
 
-    return Padding(
-      // padding: const EdgeInsets.only(left: 16, right: 16),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Dismissible(
-        key: ValueKey(superhero.id),
+      //  if (MainPageState.favorites) {
+      //     return true;
+      // } else (MainPageState.searchResults) {
+      //     return false;
+      // }
+
+
+    if (ableToSwipe) {
+
+      return Padding(
+        // padding: const EdgeInsets.only(left: 16, right: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Dismissible(
+
+          key: ValueKey(superhero.id),
+          child: SuperheroCard(
+            superheroInfo: superhero,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (conext) => SuperheroPage(id: superhero.id), // ...
+                ),
+              );
+            },
+          ),
+          background: Container(
+            height: 70,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: SuperheroesColors.red,
+            ),
+            child: Text(
+              'Remove from favorites'.toUpperCase(),
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 12,
+                color: SuperheroesColors.white24,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          onDismissed: (_) => bloc.removeFromFavorites(superhero.id), // if (ableToSwipe == true)
+        ),
+      );
+
+    } else {
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SuperheroCard(
           superheroInfo: superhero,
           onTap: () {
@@ -307,27 +367,70 @@ class ListTile extends StatelessWidget {
             );
           },
         ),
-        background: Container(
-          height: 70,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: SuperheroesColors.red,
-          ),
-          child: Text(
-            'Remove from favorites'.toUpperCase(),
-            style: TextStyle(
-              fontSize: 12,
-              color: SuperheroesColors.white24,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        onDismissed: (_) => bloc.removeFromFavorites(superhero.id),
-      ),
-    );
+      );
+    }
   }
 }
+
+
+
+
+
+
+
+
+// class ListTile extends StatelessWidget {
+//   final SuperheroInfo superhero;
+//   final bool ableToSwipe ;
+//
+//   const ListTile({
+//     Key? key,
+//     required this.superhero, required this.ableToSwipe,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
+//
+//     return Padding(
+//       // padding: const EdgeInsets.only(left: 16, right: 16),
+//       padding: const EdgeInsets.symmetric(horizontal: 16),
+//       child: Dismissible(
+//         key: ValueKey(superhero.id),
+//         child: SuperheroCard(
+//           superheroInfo: superhero,
+//           onTap: () {
+//             Navigator.of(context).push(
+//               MaterialPageRoute(
+//                 builder: (conext) => SuperheroPage(id: superhero.id), // ...
+//               ),
+//             );
+//           },
+//         ),
+//         background: Container(
+//           height: 70,
+//           alignment: Alignment.center,
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(8),
+//             color: SuperheroesColors.red,
+//           ),
+//           child: Text(
+//             'Remove from favorites'.toUpperCase(),
+//             style: TextStyle(
+//               fontSize: 12,
+//               color: SuperheroesColors.white24,
+//               fontWeight: FontWeight.w700,
+//             ),
+//           ),
+//         ),
+//         onDismissed: (_) => bloc.removeFromFavorites(superhero.id), // if (ableToSwipe == true)
+//       ),
+//     );
+//   }
+// }
+
+
+
 
 class ListTitleWidget extends StatelessWidget {
   const ListTitleWidget({
