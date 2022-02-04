@@ -1,22 +1,31 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:superheroes/exception/api_exception.dart';
 import 'package:superheroes/favorite_superheroes_storage.dart';
 import 'package:superheroes/model/superhero.dart';
 
+
+
+
 class SuperheroBloc {
   http.Client? client;
   final String id;
 
   final superheroSubject = BehaviorSubject<Superhero>();
+  // final observeSuperheroPageState = BehaviorSubject<SuperheroPageState>();  ///
+
 
   StreamSubscription? getFromFavoritesSubscription;
   StreamSubscription? requestSubscription;
   StreamSubscription? addToFavoriteSubscription;
   StreamSubscription? removeFromFavoriteSubscription;
+
+  // StreamSubscription? observeSuperheroPageState;  ///
 
   SuperheroBloc({
     this.client,
@@ -34,18 +43,16 @@ class SuperheroBloc {
             .asStream()
             .listen(
               (superhero) {
-                if (superhero != null) {
-                  superheroSubject.add(superhero);
-                }
-                requestSuperhero();
+            if (superhero != null) {
+              superheroSubject.add(superhero);
+            }
+            requestSuperhero();
           },
           onError: (error, stackTrace) =>
-              print('Error happened in removeFromFavorites: $error, $stackTrace'),
+              print(
+                  'Error happened in removeFromFavorites: $error, $stackTrace'),
         );
-
-
   }
-
 
 
   void addToFavorite() {
@@ -60,7 +67,7 @@ class SuperheroBloc {
         .addToFavorites(superhero)
         .asStream()
         .listen(
-      (event) {
+          (event) {
         print('Added to favorites: $event');
       },
       onError: (error, stackTrace) =>
@@ -69,19 +76,19 @@ class SuperheroBloc {
   }
 
   void removeFromFavorites() {
-
     removeFromFavoriteSubscription?.cancel();
     removeFromFavoriteSubscription =
         FavoriteSuperheroesStorage.getInstance()
-        .removeFromFavorites(id)
-        .asStream()
-        .listen(
-          (event) {
-        print('Remove from favorites: $event');
-      },
-      onError: (error, stackTrace) =>
-          print('Error happened in removeFromFavorites: $error, $stackTrace'),
-    );
+            .removeFromFavorites(id)
+            .asStream()
+            .listen(
+              (event) {
+            print('Remove from favorites: $event');
+          },
+          onError: (error, stackTrace) =>
+              print(
+                  'Error happened in removeFromFavorites: $error, $stackTrace'),
+        );
   }
 
   // Stream<bool> observeIsFavorite() => Stream.value(false);
@@ -127,57 +134,95 @@ class SuperheroBloc {
     requestSubscription?.cancel();
     addToFavoriteSubscription?.cancel();
     removeFromFavoriteSubscription?.cancel();
-
     superheroSubject.close();
+    // observeSuperheroPageState.close();///
+
+
+  }
+
+
+  Stream<SuperheroPageState> observeSuperheroPageState() async* {     /// добавить метод
+
+    // observeSuperheroPageState?.close();
+    final superhero = superheroSubject
+        .valueOrNull; // valueOrNull возвращает значение если его в Subject нет#
+    if (superhero == null) {         /// если герой не сохранен
+      yield SuperheroPageState.loading;
+    }
+    if (superhero != null) {        /// если герой сохранен
+      yield SuperheroPageState.loaded;
+    }
+      onError: (error, stackTrace) =>
+          print('Error happened in addToFavorite: $error, $stackTrace');
+
   }
 }
 
+enum SuperheroPageState {   /// с тремя состояниями
+  loading,
+  loaded,
+  error
+}
+
+
+
+
+
+
+
+
+
 
 //
-// observeSuperheroPageState()
-// class MainPageStateWidget extends StatelessWidget {
+// Stream<SuperheroPageState> observeSuperheroPageState() async* {     /// добавить метод
+//
+//   // observeSuperheroPageState?.cancel();
+//   final superhero = superheroSubject
+//       .valueOrNull; // valueOrNull возвращает значение если его в Subject нет#
+//   if (superhero == null) {         /// если герой не сохранен
+//     yield SuperheroPageState.loading;
+//   }
+//   if (superhero != null) {        /// если герой сохранен
+//     yield SuperheroPageState.loaded;
+//   }
+//   onError: (error, stackTrace) =>
+//       print('Error happened in addToFavorite: $error, $stackTrace');
+//
+// }
+// }
+//
+// enum SuperheroPageState {   /// с тремя состояниями
+//   loading,
+//   loaded,
+//   error
+// }
+
+
+// class SuperheroPageStateWidget extends StatelessWidget {
 //   final FocusNode searchFieldFocusNode;
 //
-//   const MainPageStateWidget({
+//   const SuperheroPageStateWidget({
 //     Key? key,
 //     required this.searchFieldFocusNode,
 //   }) : super(key: key);
 //
 //   @override
 //   Widget build(BuildContext context) {
-//     final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
-//     return StreamBuilder<MainPageState>(
-//       stream: bloc.observeMainPageState(),
+//     final SuperheroBloc bloc = Provider.of<SuperheroBloc>(context, listen: false);
+//     return StreamBuilder<SuperheroPageState>(
+//       stream: bloc.observeSuperheroPageState(),
 //       builder: (context, snapshot) {
 //         if (!snapshot.hasData || snapshot.data == null) {
 //           return SizedBox();
 //         }
-//         final MainPageState state = snapshot.data!;
+//         final SuperheroPageState state = snapshot.data!;
 //         switch (state) {
-//           case MainPageState.loading:
-//             return LoadingIndicator();
-//           case MainPageState.minSymbols:
-//             return MinSymbolsWidget();
-//           case MainPageState.noFavorites:
-//             return NoFavoritesWidget(
-//                 searchFieldFocusNode: searchFieldFocusNode);
-//           case MainPageState.favorites:
-//             return SuperheroesList(
-//               title: 'Your favorites',
-//               stream: bloc.observeFavoriteSuperheroes(),
-//             );
-//
-//           case MainPageState.searchResults:
-//             return SuperheroesList(
-//               title: 'Search results',
-//               stream: bloc.observeSearchedSuperheroes(),
-//             );
-//           case MainPageState.nothingFound:
-//             return NothingFoundWidget(
-//               searchFieldFocusNode: searchFieldFocusNode,
-//             );
-//           case MainPageState.loadingError:
-//             return LoadingErrorWidget();
+//           case SuperheroPageState.loading:
+//             return Loading();
+//           case SuperheroPageState.loaded:
+//             return Loaded();
+//           case SuperheroPageState.error:
+//             return Error();
 //           default:
 //             return Center(
 //               child: Text(
