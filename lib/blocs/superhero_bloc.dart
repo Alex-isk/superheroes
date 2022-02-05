@@ -150,7 +150,7 @@ class SuperheroBloc {
     addToFavoriteSubscription?.cancel();
     removeFromFavoriteSubscription?.cancel();
     superheroSubject.close();
-    // observeSuperheroPageState.close();///
+    observeSuperheroPageState.close();/// закрываем обзор
 
 
   }
