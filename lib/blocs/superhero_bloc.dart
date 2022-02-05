@@ -23,11 +23,7 @@ class SuperheroBloc {
 
   // final observeSuperheroPageState = BehaviorSubject<SuperheroPageState>();  ///
 
-<<<<<<< HEAD
 
-=======
-
->>>>>>> b4a1fa6cf4d850f27236af5ec0eca2d7cafb4a6c
 
 
   StreamSubscription? getFromFavoritesSubscription;
