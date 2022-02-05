@@ -23,9 +23,7 @@ class SuperheroBloc {
 
   // final observeSuperheroPageState = BehaviorSubject<SuperheroPageState>();  ///
 
-  // final behaviour Subject<superHeroPageState> _pageStateSubject = Behaviour Subject<brndnr >()
-  // Делается это так например для загрузки:
-  // pageStateSubject.add(SuperHeroPageState.loading)
+ 
 
 
   StreamSubscription? getFromFavoritesSubscription;
