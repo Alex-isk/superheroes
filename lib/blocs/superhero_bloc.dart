@@ -24,6 +24,8 @@ class SuperheroBloc {
   // final observeSuperheroPageState = BehaviorSubject<SuperheroPageState>();  ///
 
 
+
+
   StreamSubscription? getFromFavoritesSubscription;
   StreamSubscription? requestSubscription;
   StreamSubscription? addToFavoriteSubscription;
@@ -148,7 +150,7 @@ class SuperheroBloc {
     addToFavoriteSubscription?.cancel();
     removeFromFavoriteSubscription?.cancel();
     superheroSubject.close();
-    observeSuperheroPageState.close();///   закрываю обзор
+    // observeSuperheroPageState.close();///
 
 
   }
