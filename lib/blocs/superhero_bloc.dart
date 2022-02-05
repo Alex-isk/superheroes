@@ -16,8 +16,8 @@ class SuperheroBloc {
   http.Client? client;
   final String id;
 
-  final BehaviorSubject <SuperheroPageState> observeSuperheroPageState = BehaviorSubject<SuperheroPageState>();
-  /// 2. создаем переменную _observeSuperheroPageState
+  final BehaviorSubject <SuperheroPageState> superheroPageState = BehaviorSubject<SuperheroPageState>();
+  /// 2. создаем переменную superheroPageState
 
   final superheroSubject = BehaviorSubject<Superhero>();
 
@@ -51,9 +51,14 @@ class SuperheroBloc {
               (superhero) {
             if (superhero != null) {       /// в данном методе указывается - если герой сохранен в избранном
               superheroSubject.add(superhero);
-              observeSuperheroPageState.add(SuperheroPageState.loaded);  ///
+              superheroPageState.add(SuperheroPageState.loaded);  /// добавил условие
                                            /// 3. Если сохранен, выдаем состояние SuperheroPageState.loaded
             }
+            if (superhero == null) {   /// добавил if - если герой не сохранен в избранном
+              superheroPageState.add(SuperheroPageState.loading);    ///
+            }                         /// 4. Если не сохранен, выдаем состояние SuperheroPageState.loading
+
+
             requestSuperhero();
           },
           onError: (error, stackTrace) =>
@@ -66,10 +71,8 @@ class SuperheroBloc {
   void addToFavorite() {
     final superhero = superheroSubject
         .valueOrNull; // valueOrNull возвращает знаечени если его в Subject нет
-    if (superhero == null) {          /// в данном методе указывается - если герой не сохранен в избранном
+    if (superhero == null) {
       print("ERROR: superhero is null while shouldn't be");
-      observeSuperheroPageState.add(SuperheroPageState.loading);    ///
-                                     /// 4. Если не сохранен, выдаем состояние SuperheroPageState.loading
       return;
     }
     addToFavoriteSubscription?.cancel();
@@ -112,7 +115,7 @@ class SuperheroBloc {
       superheroSubject.add(superhero);
     }, onError: (error, stackTrace) {
       print('Error happened in requestSuperhero: $error, $stackTrace');
-      observeSuperheroPageState.add(SuperheroPageState.error); ///
+      superheroPageState.add(SuperheroPageState.error); ///
     });
   }
                               /// 5. Если загрузка из сети закончилась с ошибкой, но текущий супергерой не
@@ -150,7 +153,7 @@ class SuperheroBloc {
     addToFavoriteSubscription?.cancel();
     removeFromFavoriteSubscription?.cancel();
     superheroSubject.close();
-    observeSuperheroPageState.close();/// закрываем обзор
+    superheroPageState.close();/// закрываем обзор
 
 
   }
