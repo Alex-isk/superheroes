@@ -156,8 +156,8 @@ class SuperheroBloc {
   ///       доступен нам из избранного (то есть раньше уже выдали состояние
   ///       SuperheroPageState.loaded), не выдаем никакого дополнительного состояния.
 
-  Stream<SuperheroPageState> observeSuperheroPageState(SuperheroPageState) {
-       return _superHeroPageStateSubject...; /// ???
+  Stream<SuperheroPageState> observeSuperheroPageState() {
+       return _superHeroPageStateSubject.distinct(); /// ???
     }
    /// 2. В SuperheroBloc добавить метод observeSuperheroPageState(), в котором
   ///       возвращать текущее состояние.   3. Начального состояния быть не должно.
