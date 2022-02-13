@@ -15,6 +15,3 @@ class SuperheroesColors {
   static const green = Color(0xFF2AAB6A);
   static const textGrey = Color.fromRGBO(153, 153, 153, 1);
 }
-
-
-

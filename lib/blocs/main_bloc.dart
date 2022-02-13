@@ -65,85 +65,81 @@ class MainBloc {
 
   void removeFromFavorites(final String id) {
     removeFromFavoriteSubscription?.cancel();
-    removeFromFavoriteSubscription =
-        FavoriteSuperheroesStorage.getInstance()
-            .removeFromFavorites(id)
-            .asStream()
-            .listen(
-              (event) {
-            print('Remove from favorites: $event');
-          },
-          onError: (error, stackTrace) =>
-              print('Error happened in removeFromFavorites: $error, $stackTrace'),
-        );
+    removeFromFavoriteSubscription = FavoriteSuperheroesStorage.getInstance()
+        .removeFromFavorites(id)
+        .asStream()
+        .listen(
+      (event) {
+        print('Remove from favorites: $event');
+      },
+      onError: (error, stackTrace) =>
+          print('Error happened in removeFromFavorites: $error, $stackTrace'),
+    );
   }
 
-
-  void retry() {                  /// повтор запроса
-   final currentText = currentTextSubject.value;
-   searchForSuperheroes(currentText);
+  void retry() {
+    /// повтор запроса
+    final currentText = currentTextSubject.value;
+    searchForSuperheroes(currentText);
   }
-
 
   Stream<List<SuperheroInfo>> observeFavoriteSuperheroes() {
-     return FavoriteSuperheroesStorage.getInstance()
-          .observeFavoriteSuperheroes()
-          .map((superheroes) {
-         return superheroes.map((superhero) => SuperheroInfo.fromSuperhero(superhero)).toList();
-     }
-     );
+    return FavoriteSuperheroesStorage.getInstance()
+        .observeFavoriteSuperheroes()
+        .map((superheroes) {
+      return superheroes
+          .map((superhero) => SuperheroInfo.fromSuperhero(superhero))
+          .toList();
+    });
   }
 
   Stream<List<SuperheroInfo>> observeSearchedSuperheroes() =>
       searchedSuperheroesSubject;
-
 
   // Future<List<SuperheroInfo>> search(final String text) async {
   //   await Future.delayed(Duration(seconds: 1));
   //  метод delayed -> ждем сколько указано и возвращаем SuperheroInfo.mocked
   //   return SuperheroInfo.mocked;
 
+  Future<List<SuperheroInfo>> search(final String text) async {
+    // await Future.delayed(Duration(seconds: 1));
+    final token = dotenv.env['SUPERHERO_TOKEN'];
+    final response = await (client ??= http.Client())
+        .get(Uri.parse('https://superheroapi.com/api/$token/search/$text'));
+    if (response.statusCode >= 500 && response.statusCode <= 599) {
+      throw ApiException('Server error happened');
+    }
+    if (response.statusCode >= 400 && response.statusCode <= 499) {
+      throw ApiException('Client error happened');
+    }
+    final decoded = json.decode(response.body);
+    if (decoded['response'] == 'success') {
+      final List<dynamic> results = decoded['results'];
+      final List<Superhero> superheroes = results
+          .map((rawSuperhero) => Superhero.fromJson(rawSuperhero))
+          .toList();
+      final List<SuperheroInfo> found = superheroes.map((superhero) {
+        return SuperheroInfo.fromSuperhero(superhero);
+        // id: superhero.id,
+        // name: superhero.name,
+        // realName: superhero.biography.fullName,
+        // imageUrl: superhero.image.url,
 
-    Future<List<SuperheroInfo>> search(final String text) async {
-      // await Future.delayed(Duration(seconds: 1));
-      final token = dotenv.env['SUPERHERO_TOKEN'];
-      final response = await (client ??= http.Client()).get(
-          Uri.parse('https://superheroapi.com/api/$token/search/$text'));
-     if (response.statusCode >= 500 && response.statusCode <= 599) {
-       throw ApiException('Server error happened');
-     }
-      if (response.statusCode >= 400 && response.statusCode <= 499) {
-        throw ApiException('Client error happened');
-      }
-      final decoded = json.decode(response.body);
-      if (decoded['response'] == 'success') {
-        final List<dynamic> results = decoded['results'];
-        final List<Superhero> superheroes = results.map((rawSuperhero) =>
-            Superhero.fromJson(rawSuperhero)).toList();
-        final List<SuperheroInfo> found = superheroes.map((superhero) {
-          return SuperheroInfo.fromSuperhero(superhero);
-            // id: superhero.id,
-            // name: superhero.name,
-            // realName: superhero.biography.fullName,
-            // imageUrl: superhero.image.url,
-
-      // if (decoded['response'] == 'success') {
-      //   final List<dynamic> results = decoded['results'];
-      //   final List<SuperheroInfo> found = results.map((rawSuperhero) {
-      //     return SuperheroInfo(
-      //             name: rawSuperhero['name'],
-      //             realName: rawSuperhero['biography']['full-name'],
-      //             imageUrl: rawSuperhero['image']['url'],
-      //     );
-        }).toList();
-        return found;
-
+        // if (decoded['response'] == 'success') {
+        //   final List<dynamic> results = decoded['results'];
+        //   final List<SuperheroInfo> found = results.map((rawSuperhero) {
+        //     return SuperheroInfo(
+        //             name: rawSuperhero['name'],
+        //             realName: rawSuperhero['biography']['full-name'],
+        //             imageUrl: rawSuperhero['image']['url'],
+        //     );
+      }).toList();
+      return found;
 
       // {
       //   "response": "error",
       // "error": "character with given name not found"
       // }
-
 
       // return SuperheroInfo.mocked
       //     .where((superheroInfo) =>
@@ -154,31 +150,30 @@ class MainBloc {
     } else if (decoded['response'] == 'error') {
       if (decoded['error'] == 'character with given name not found') {
         return [];
-  }
+      }
       throw ApiException('Client error happened');
     }
-        throw Exception('Unknown error happened');
-}
+    throw Exception('Unknown error happened');
+  }
 
+  Stream<MainPageState> observeMainPageState() => stateSubject;
 
-Stream<MainPageState> observeMainPageState() => stateSubject;
-
-    // void removeFavorite() {
-    //   final List<SuperheroInfo> currentFavorites = favoriteSuperheroesSubject.value;
-    //   if (currentFavorites.isEmpty) {
-    //     favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
-    //   } else {
-    //     favoriteSuperheroesSubject.add(currentFavorites.sublist(0, currentFavorites.length - 1));
-    //     // favoriteSuperheroesSubject.add(currentFavorites.take(currentFavorites.length -1).toList()); // аналогично
-    //   }
-    //     }
+  // void removeFavorite() {
+  //   final List<SuperheroInfo> currentFavorites = favoriteSuperheroesSubject.value;
+  //   if (currentFavorites.isEmpty) {
+  //     favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
+  //   } else {
+  //     favoriteSuperheroesSubject.add(currentFavorites.sublist(0, currentFavorites.length - 1));
+  //     // favoriteSuperheroesSubject.add(currentFavorites.take(currentFavorites.length -1).toList()); // аналогично
+  //   }
+  //     }
 
   void nextState() {
     final currentState = stateSubject.value;
     final nextState = MainPageState.values[
         (MainPageState.values.indexOf(currentState) + 1) %
             MainPageState.values.length];
-    stateSubject.add(nextState);    // stateSubject.sink.add(nextState);
+    stateSubject.add(nextState); // stateSubject.sink.add(nextState);
   }
 
   void updateText(final String? text) {
@@ -197,9 +192,6 @@ Stream<MainPageState> observeMainPageState() => stateSubject;
   }
 }
 
-
-
-
 enum MainPageState {
   noFavorites,
   minSymbols,
@@ -217,31 +209,24 @@ class SuperheroInfo {
   final String imageUrl;
   final AlignmentInfo? alignmentInfo;
 
-  
   const SuperheroInfo({
-        required this.id,
-        required this.name,
-        required this.realName,
-        required this.imageUrl,
-        this.alignmentInfo,
-      });
+    required this.id,
+    required this.name,
+    required this.realName,
+    required this.imageUrl,
+    this.alignmentInfo,
+  });
 
-
-  
-  
-  factory  SuperheroInfo.fromSuperhero(final Superhero superhero) {
+  factory SuperheroInfo.fromSuperhero(final Superhero superhero) {
     return SuperheroInfo(
-        id: superhero.id,
-        name: superhero.name,
-        realName: superhero.biography.fullName,
-        imageUrl: superhero.image.url,
-        alignmentInfo: superhero.biography.alignmentInfo,
+      id: superhero.id,
+      name: superhero.name,
+      realName: superhero.biography.fullName,
+      imageUrl: superhero.image.url,
+      alignmentInfo: superhero.biography.alignmentInfo,
     );
   }
-  
-  
-  
-  
+
   // cmd + N ->  toString()  -> добавляем метод toString()
   // -> для того, чтобы при дебаге получать читабельный код ->
   @override
@@ -263,7 +248,6 @@ class SuperheroInfo {
   @override
   int get hashCode =>
       id.hashCode ^ name.hashCode ^ realName.hashCode ^ imageUrl.hashCode;
-
 
   // коллекция, которая позволяет отображать данные, которые еще не получены с сервера ->
   static const mocked = [

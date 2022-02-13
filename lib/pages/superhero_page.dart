@@ -21,7 +21,7 @@ class SuperheroPage extends StatefulWidget {
   SuperheroPage({Key? key, this.client, required this.id}) : super(key: key);
 
   @override
-   _SuperheroPageState createState() => _SuperheroPageState();
+  _SuperheroPageState createState() => _SuperheroPageState();
 }
 
 class _SuperheroPageState extends State<SuperheroPage> {
@@ -51,12 +51,7 @@ class _SuperheroPageState extends State<SuperheroPage> {
   }
 }
 
-
-
-
-
 class SuperheroContentPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of<SuperheroBloc>(context, listen: false);
@@ -69,24 +64,23 @@ class SuperheroContentPage extends StatelessWidget {
         }
         final superhero = snapshot.data!;
         return CustomScrollView(
-            slivers: [
-              SuperheroAppBar(superhero: superhero),
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 30),
-                    if (superhero.powerstats
-                        .isNotNull()) // Conditional Operator — Условный оператор
-                      PowerstatsWidget(powerstats: superhero.powerstats),
-                    BiographyWidget(biography: superhero.biography),
-                  ],
-                ),
+          slivers: [
+            SuperheroAppBar(superhero: superhero),
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  const SizedBox(height: 30),
+                  if (superhero.powerstats
+                      .isNotNull()) // Conditional Operator — Условный оператор
+                    PowerstatsWidget(powerstats: superhero.powerstats),
+                  BiographyWidget(biography: superhero.biography),
+                ],
               ),
-            ],
-          );
+            ),
+          ],
+        );
       },
     );
-
   }
 }
 
@@ -100,8 +94,6 @@ class SuperheroAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return SliverAppBar(
       // primary: true,    // по умолчанию true, при false стрелка-возврат съезжает все на верх // отображается ли SliverAppBar в верхней части экрана или нет
       stretch: true, // скролл
@@ -129,30 +121,33 @@ class SuperheroAppBar extends StatelessWidget {
   }
 }
 
-
-
 class FavoriteButton extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of<SuperheroBloc>(context, listen: false);
     return StreamBuilder<bool>(
-      stream: bloc.observeIsFavorite(),
-      initialData: false,
-      builder: (context, snapshot) {
-        final favorite = !snapshot.hasData || snapshot.data == null || snapshot.data!;
-        return GestureDetector(
-          onTap: () => favorite ? bloc.removeFromFavorites() : bloc.addToFavorite(),
-          child: Container(
-            height: 52, width: 52,
-            alignment: Alignment.center,
-            child: Image.asset(favorite ? SuperheroesIcons.starFilled : SuperheroesIcons.starEmpty,
-            height: 32, width: 32,
+        stream: bloc.observeIsFavorite(),
+        initialData: false,
+        builder: (context, snapshot) {
+          final favorite =
+              !snapshot.hasData || snapshot.data == null || snapshot.data!;
+          return GestureDetector(
+            onTap: () =>
+                favorite ? bloc.removeFromFavorites() : bloc.addToFavorite(),
+            child: Container(
+              height: 52,
+              width: 52,
+              alignment: Alignment.center,
+              child: Image.asset(
+                favorite
+                    ? SuperheroesIcons.starFilled
+                    : SuperheroesIcons.starEmpty,
+                height: 32,
+                width: 32,
+              ),
             ),
-          ),
-        );
-      }
-    );
+          );
+        });
   }
 }
 
@@ -279,7 +274,7 @@ class PowerstatWidget extends StatelessWidget {
             style: TextStyle(
               color: SuperheroesColors.text,
               fontWeight: FontWeight.w700,
-              fontSize: 12 ,
+              fontSize: 12,
             ),
           ),
         ),
@@ -291,9 +286,9 @@ class PowerstatWidget extends StatelessWidget {
     if (value <= 0.5) {
       return Color.lerp(Colors.red, Colors.orangeAccent, value / 0.5)!;
     } else {
-      return Color.lerp(Colors.orangeAccent, Colors.green, (value - 0.5) / 0.5)!;
+      return Color.lerp(
+          Colors.orangeAccent, Colors.green, (value - 0.5) / 0.5)!;
     }
-
   }
 }
 
@@ -314,49 +309,50 @@ class ArcWidget extends StatelessWidget {
 }
 
 class ArcCustomPainter extends CustomPainter {
-
   final double value;
   final Color color;
 
   ArcCustomPainter(this.value, this.color);
   @override
   void paint(Canvas canvas, Size size) {
-  final rect = Rect.fromLTWH(0, 0, size.width, size.height * 2); // не меняя размеры CustomPaint Size(66, 33), умножим конкретно для арки на 2
+    final rect = Rect.fromLTWH(
+        0,
+        0,
+        size.width,
+        size.height *
+            2); // не меняя размеры CustomPaint Size(66, 33), умножим конкретно для арки на 2
 
-  final backgroundPaint = Paint()
-    ..color = SuperheroesColors.white24
-    ..style = PaintingStyle.stroke  // только граница
-    ..strokeCap = StrokeCap.round  // окончание границ - закругленные
-    ..strokeWidth = 6;             // ширина
+    final backgroundPaint = Paint()
+      ..color = SuperheroesColors.white24
+      ..style = PaintingStyle.stroke // только граница
+      ..strokeCap = StrokeCap.round // окончание границ - закругленные
+      ..strokeWidth = 6; // ширина
 
-
-  final paint = Paint()
-  ..color = color                  // цвет который получили в конструкторе
-  ..style = PaintingStyle.stroke  // только граница
-  ..strokeCap = StrokeCap.round  // окончание границ - закругленные
-  ..strokeWidth = 6;             // ширина
+    final paint = Paint()
+      ..color = color // цвет который получили в конструкторе
+      ..style = PaintingStyle.stroke // только граница
+      ..strokeCap = StrokeCap.round // окончание границ - закругленные
+      ..strokeWidth = 6; // ширина
 
     // canvas.drawArc(rect, startAngle,    sweepAngle,                                                       useCenter,                  paint)
     // canvas.drawArc(rect,   старт-pi,    на сколько повернем-pi*value(умножаем на value которое получили),   false-сектор не заполнен, paint);
 
-  canvas.drawArc(rect, pi, pi, false, backgroundPaint); // рисуем от pi до pi    // 1=важна последовательность - накладываются сперва фон
-  canvas.drawArc(rect, pi, pi*value, false, paint);                              // 2=важна последовательность - накладываются
-
+    canvas.drawArc(rect, pi, pi, false,
+        backgroundPaint); // рисуем от pi до pi    // 1=важна последовательность - накладываются сперва фон
+    canvas.drawArc(rect, pi, pi * value, false,
+        paint); // 2=важна последовательность - накладываются
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     if (oldDelegate is ArcCustomPainter) {
-      return oldDelegate.value != value && oldDelegate.color != color; // если предыдущий CustomPainter такогоже типа ноимеет др значение и цвет - то перерисовываем
+      return oldDelegate.value != value &&
+          oldDelegate.color !=
+              color; // если предыдущий CustomPainter такогоже типа ноимеет др значение и цвет - то перерисовываем
     }
     return true;
   }
 }
-
-
-
-
-
 
 // class BiographyWidget extends StatelessWidget {
 //   final Biography biography;
@@ -383,15 +379,12 @@ class BiographyWidget extends StatelessWidget {
       children: [
         Stack(
           children: [
-
-
-
-
             Container(
               // width: 328, height: 261,
               margin: EdgeInsets.symmetric(horizontal: 16),
               // color: SuperheroesColors.backgroundGrey,
-              padding: const EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 24),
+              padding: const EdgeInsets.only(
+                  left: 16, top: 16, right: 16, bottom: 24),
               decoration: BoxDecoration(
                 color: SuperheroesColors.backgroundGrey,
                 borderRadius: BorderRadius.circular(20),
@@ -399,17 +392,18 @@ class BiographyWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text('Bio'.toUpperCase(),
+                  Text(
+                    'Bio'.toUpperCase(),
                     textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                    color: SuperheroesColors.text,
-                  ),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                      color: SuperheroesColors.text,
+                    ),
                   ),
                   const SizedBox(height: 8),
-
-                  Text('Full name'.toUpperCase(),
+                  Text(
+                    'Full name'.toUpperCase(),
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
@@ -418,7 +412,8 @@ class BiographyWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(biography.fullName,
+                  Text(
+                    biography.fullName,
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
@@ -427,8 +422,8 @@ class BiographyWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-
-                  Text('Aliases'.toUpperCase(),
+                  Text(
+                    'Aliases'.toUpperCase(),
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
@@ -437,7 +432,8 @@ class BiographyWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(biography.aliases.join(),
+                  Text(
+                    biography.aliases.join(),
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
@@ -446,8 +442,8 @@ class BiographyWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-
-                  Text('Place of birth'.toUpperCase(),
+                  Text(
+                    'Place of birth'.toUpperCase(),
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
@@ -456,7 +452,8 @@ class BiographyWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(biography.placeOfBirth,
+                  Text(
+                    biography.placeOfBirth,
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
@@ -470,10 +467,12 @@ class BiographyWidget extends StatelessWidget {
             ),
 
             // AlignmentWidget(alignmentInfo: ),
-            RotatedBox(quarterTurns: 1,
+            RotatedBox(
+                quarterTurns: 1,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16),
-                  child: BiographyAlignment(text: 'GOOD', color: SuperheroesColors.green),
+                  child: BiographyAlignment(
+                      text: 'GOOD', color: SuperheroesColors.green),
                 )),
           ],
         ),
@@ -484,13 +483,11 @@ class BiographyWidget extends StatelessWidget {
 }
 
 class BiographyAlignment extends StatelessWidget {
- final String text;
+  final String text;
   final Color color;
 
-  const BiographyAlignment({Key? key,
-   required this.text,
-   required this.color
-  }) : super(key: key);
+  const BiographyAlignment({Key? key, required this.text, required this.color})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -499,20 +496,18 @@ class BiographyAlignment extends StatelessWidget {
       // mainAxisSize: MainAxisSize.min,
       // mainAxisAlignment: MainAxisAlignment.end,
       // crossAxisAlignment: CrossAxisAlignment.end,
-      child:
-        Container(
-          color: color,
-          child: Text(text,
-            textAlign: TextAlign.end ,
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 10,
-              color: SuperheroesColors.text,
-            ),
+      child: Container(
+        color: color,
+        child: Text(
+          text,
+          textAlign: TextAlign.end,
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 10,
+            color: SuperheroesColors.text,
           ),
         ),
-
-
+      ),
     );
   }
 }

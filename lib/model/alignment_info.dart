@@ -1,25 +1,24 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 
 class AlignmentInfo {
-final String name;
-final Color color;
+  final String name;
+  final Color color;
 
   const AlignmentInfo._(this.name, this.color);
 
-static const bad = AlignmentInfo._('bad', SuperheroesColors.red);
-static const good = AlignmentInfo._('good', SuperheroesColors.green);
-static const neutral = AlignmentInfo._('neutral', SuperheroesColors.grey);
+  static const bad = AlignmentInfo._('bad', SuperheroesColors.red);
+  static const good = AlignmentInfo._('good', SuperheroesColors.green);
+  static const neutral = AlignmentInfo._('neutral', SuperheroesColors.grey);
 
-static AlignmentInfo? fromAlignment(final String alignment) {
-  if (alignment == 'bad') {
+  static AlignmentInfo? fromAlignment(final String alignment) {
+    if (alignment == 'bad') {
       return bad;
-  } else if (alignment == 'good') {
+    } else if (alignment == 'good') {
       return good;
-  } else if (alignment == 'neutral') {
+    } else if (alignment == 'neutral') {
       return neutral;
-  }
-      return null;
+    }
+    return null;
   }
 }

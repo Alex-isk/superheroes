@@ -87,7 +87,6 @@ class _MainPageContentState extends State<MainPageContent> {
   }
 }
 
-
 class SearchWidget extends StatefulWidget {
   final FocusNode searchFieldFocusNode;
 
@@ -270,7 +269,7 @@ class SuperheroesList extends StatelessWidget {
             }
             final SuperheroInfo item = superheroes[index - 1];
 
-            return ListTile(superhero: item,ableToSwipe: true);
+            return ListTile(superhero: item, ableToSwipe: true);
 
             // return ListTile(superhero: item,
             //    ableToSwipe:
@@ -280,7 +279,6 @@ class SuperheroesList extends StatelessWidget {
             //       return false;
             //   }
             //   );
-
           },
           separatorBuilder: (BuildContext context, int index) {
             // разделитель
@@ -292,35 +290,31 @@ class SuperheroesList extends StatelessWidget {
   }
 }
 
-
-
 class ListTile extends StatelessWidget {
   final SuperheroInfo superhero;
-  final bool ableToSwipe ;
+  final bool ableToSwipe;
 
   const ListTile({
     Key? key,
-    required this.superhero, required this.ableToSwipe,
+    required this.superhero,
+    required this.ableToSwipe,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
 
-      //  if (MainPageState.favorites) {
-      //     return true;
-      // } else (MainPageState.searchResults) {
-      //     return false;
-      // }
-
+    //  if (MainPageState.favorites) {
+    //     return true;
+    // } else (MainPageState.searchResults) {
+    //     return false;
+    // }
 
     if (ableToSwipe) {
-
       return Padding(
         // padding: const EdgeInsets.only(left: 16, right: 16),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Dismissible(
-
           key: ValueKey(superhero.id),
           child: SuperheroCard(
             superheroInfo: superhero,
@@ -349,12 +343,11 @@ class ListTile extends StatelessWidget {
               ),
             ),
           ),
-          onDismissed: (_) => bloc.removeFromFavorites(superhero.id), // if (ableToSwipe == true)
+          onDismissed: (_) => bloc
+              .removeFromFavorites(superhero.id), // if (ableToSwipe == true)
         ),
       );
-
     } else {
-
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SuperheroCard(
@@ -371,13 +364,6 @@ class ListTile extends StatelessWidget {
     }
   }
 }
-
-
-
-
-
-
-
 
 // class ListTile extends StatelessWidget {
 //   final SuperheroInfo superhero;
@@ -428,9 +414,6 @@ class ListTile extends StatelessWidget {
 //     );
 //   }
 // }
-
-
-
 
 class ListTitleWidget extends StatelessWidget {
   const ListTitleWidget({
