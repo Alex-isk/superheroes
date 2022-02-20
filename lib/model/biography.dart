@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:superheroes/model/alignment_info.dart';
-
+import 'package:collection/collection.dart';
 part 'biography.g.dart';
 
 @JsonSerializable()
@@ -24,6 +24,30 @@ class Biography {
   Map<String, dynamic> toJson() => _$BiographyToJson(this);
 
   AlignmentInfo? get alignmentInfo => AlignmentInfo.fromAlignment(alignment);
+
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Biography &&
+          runtimeType == other.runtimeType &&
+          fullName == other.fullName &&
+          alignment == other.alignment &&
+          ListEquality<String>().equals(aliases, other.aliases) &&  /// сравнение
+          ///
+          placeOfBirth == other.placeOfBirth;
+
+  @override
+  int get hashCode =>
+      fullName.hashCode ^
+      alignment.hashCode ^
+      aliases.hashCode ^
+      placeOfBirth.hashCode;
+
+  @override
+  String toString() {
+    return 'Biography{fullName: $fullName, alignment: $alignment, aliases: $aliases, placeOfBirth: $placeOfBirth}';
+  }
 }
 
 // class Biography {

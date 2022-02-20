@@ -13,11 +13,14 @@ class SuperheroBloc {
   http.Client? client;
   final String id;
 
-  final BehaviorSubject<SuperheroPageState> _superHeroPageStateSubject =
-      BehaviorSubject<SuperheroPageState>();
-  /// 0. создаем переменную _superheroPageStateSubject
+
 
   final superheroSubject = BehaviorSubject<Superhero>();
+  final BehaviorSubject<SuperheroPageState> _superHeroPageStateSubject =
+  BehaviorSubject<SuperheroPageState>();
+  /// 0. создаем переменную _superheroPageStateSubject
+
+
   // final observeSuperheroPageState = BehaviorSubject<SuperheroPageState>();  ///
   StreamSubscription? getFromFavoritesSubscription;
   StreamSubscription? requestSubscription;
@@ -51,7 +54,7 @@ class SuperheroBloc {
           /// 4.2 Если не сохранен, выдаем состояние SuperheroPageState.loading
         }
 
-        requestSuperhero(superhero == null);  /// 5/1
+        requestSuperhero(superhero != null);  /// 5/1
 
       },
       onError: (error, stackTrace) =>
@@ -158,7 +161,7 @@ class SuperheroBloc {
 
   void requestSuperhero(final bool InFavorites) {                       ///5/2
 
-    if (InFavorites) {                                                 ///5/3
+                                                   ///5/3
       requestSubscription?.cancel();
       requestSubscription = request().asStream().listen((superhero) {
         superheroSubject.add(superhero);
@@ -166,32 +169,28 @@ class SuperheroBloc {
         ///    7. Если загрузка из сети закончилась без ошибки,
         ///    выдаем состояние на SuperheroPageState.loaded
       }, onError: (error, stackTrace) {
+
+        if (!InFavorites) {
+          ///    5. Если загрузка из сети закончилась с ошибкой и текущий супергерой
+          ///       доступен нам из избранного (то есть раньше уже выдали состояние
+          ///       SuperheroPageState.loaded), не выдаем никакого дополнительного состояния.
+          _superHeroPageStateSubject.add(SuperheroPageState.error);
+        }
+
         print('Error happened in requestSuperhero: $error, $stackTrace');
-
-        ///    5. Если загрузка из сети закончилась с ошибкой и текущий супергерой
-        ///       доступен нам из избранного (то есть раньше уже выдали состояние
-        ///       SuperheroPageState.loaded), не выдаем никакого дополнительного состояния.
-
-        _superHeroPageStateSubject.add(SuperheroPageState.error);
-
         /// 6. Если загрузка из сети закончилась с ошибкой, но текущий супергерой
         /// не доступен нам из избранного, выдаем состояние SuperheroPageState.error.
       },
       );
-    }                                                                 ///5/3
+                                                                     ///5/3
   }
 
-  Stream<SuperheroPageState> observeSuperheroPageState() {
-    /// 2
-    return _superHeroPageStateSubject.distinct();
 
-    /// 8
+  void retry() {
+    _superHeroPageStateSubject.add(SuperheroPageState.loading);
+    requestSuperhero(false);
   }
 
-  /// 2. В SuperheroBloc добавить метод observeSuperheroPageState(), в котором возвращать текущее состояние.
-  /// 3. Начального состояния быть не должно.
-  ///       8. Фильтровать повторяющиеся значения. То есть не выдавать в методе
-  ///       observeSuperheroPageState() SuperheroPageState.loaded (или SuperheroPageState.error) два раза подряд
 
   Future<Superhero> request() async {
     // await Future.delayed(Duration(seconds: 1));
@@ -206,14 +205,29 @@ class SuperheroBloc {
     }
     final decoded = json.decode(response.body);
     if (decoded['response'] == 'success') {
-      return Superhero.fromJson(decoded);
+      final superhero = Superhero.fromJson(decoded);
+      await FavoriteSuperheroesStorage.getInstance().updateIfInFavorites(superhero);
+      return superhero;
     } else if (decoded['response'] == 'error') {
       throw ApiException('Client error happened');
     }
     throw Exception('Unknown error happened');
   }
 
-  Stream<Superhero> observeSuperhero() => superheroSubject;
+  Stream<Superhero> observeSuperhero() => superheroSubject.distinct();
+
+  Stream<SuperheroPageState> observeSuperheroPageState() {
+    /// 2
+    return _superHeroPageStateSubject.distinct();
+    /// 8
+  }
+  /// 2. В SuperheroBloc добавить метод observeSuperheroPageState(), в котором возвращать текущее состояние.
+  /// 3. Начального состояния быть не должно.
+  ///       8. Фильтровать повторяющиеся значения. То есть не выдавать в методе
+  ///       observeSuperheroPageState() SuperheroPageState.loaded (или SuperheroPageState.error) два раза подряд
+
+
+
 
   void dispose() {
     client?.close();

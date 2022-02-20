@@ -5,6 +5,8 @@ import 'package:superheroes/model/alignment_info.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
 
+import 'alignment_widget.dart';
+
 class SuperheroCard extends StatelessWidget {
   final SuperheroInfo
       superheroInfo; // рефакторим - используем аналогичные данные из типа - SuperheroInfo
@@ -36,7 +38,14 @@ class SuperheroCard extends StatelessWidget {
             const SizedBox(width: 12),
             NameAndRealNameWidget(superheroInfo: superheroInfo),
             if (superheroInfo.alignmentInfo != null)
-              AlignmentWidget(alignmentInfo: superheroInfo.alignmentInfo!),
+              AlignmentWidget(
+                alignmentInfo: superheroInfo.alignmentInfo!,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  ///  закругления
+                  topRight: Radius.circular(8),
+                ),
+              ),
           ],
           // children[
           //
@@ -47,32 +56,32 @@ class SuperheroCard extends StatelessWidget {
   }
 }
 
-class AlignmentWidget extends StatelessWidget {
-  final AlignmentInfo alignmentInfo;
-
-  const AlignmentWidget({Key? key, required this.alignmentInfo})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return RotatedBox(
-      quarterTurns: 1,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 6),
-        color: alignmentInfo.color,
-        alignment: Alignment.center,
-        child: Text(
-          alignmentInfo.name.toUpperCase(),
-          style: TextStyle(
-            color: SuperheroesColors.text,
-            fontWeight: FontWeight.w700,
-            fontSize: 10,
-          ),
-        ),
-      ),
-    );
-  }
-}
+// class AlignmentWidget extends StatelessWidget {
+//   final AlignmentInfo alignmentInfo;
+//
+//   const AlignmentWidget({Key? key, required this.alignmentInfo})
+//       : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return RotatedBox(
+//       quarterTurns: 1,
+//       child: Container(
+//         padding: EdgeInsets.symmetric(vertical: 6),
+//         color: alignmentInfo.color,
+//         alignment: Alignment.center,
+//         child: Text(
+//           alignmentInfo.name.toUpperCase(),
+//           style: TextStyle(
+//             color: SuperheroesColors.text,
+//             fontWeight: FontWeight.w700,
+//             fontSize: 10,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class NameAndRealNameWidget extends StatelessWidget {
   const NameAndRealNameWidget({
@@ -143,9 +152,10 @@ class _AvatarWidget extends StatelessWidget {
         errorWidget: (context, url, error) {
           return Center(
             child: Image.asset(
-              SuperheroesImages.unknownMan, width: 20, height: 62,
+              SuperheroesImages.unknownMan,
+              width: 20,
+              height: 62,
               fit: BoxFit.cover,
-
             ),
           );
         },

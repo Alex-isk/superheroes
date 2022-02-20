@@ -24,6 +24,6 @@ void main() async {
   // group("l08h05", () => runTestLesson4Task5());
   // group("l08h06", () => runTestLesson4Task6());
   group("l08h07", () => runTestLesson4Task7());
-  // group("l08h08", () => runTestLesson4Task8());
-  // group("l08h09", () => runTestLesson4Task9());
+  group("l08h08", () => runTestLesson4Task8());
+  group("l08h09", () => runTestLesson4Task9());
 }
