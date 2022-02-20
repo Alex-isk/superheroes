@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/superhero_bloc.dart';
+import 'package:superheroes/model/alignment_info.dart';
 import 'package:superheroes/model/biography.dart';
 import 'package:superheroes/model/powerstats.dart';
 import 'package:superheroes/model/server_image.dart';
@@ -13,7 +14,7 @@ import 'package:superheroes/resources/superheroes_icons.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
 import 'package:superheroes/widgets/action_button.dart';
 import 'package:http/http.dart' as http;
-import 'package:superheroes/widgets/alignment_widget.dart';
+
 import 'package:superheroes/widgets/info_with_button.dart';
 import 'package:superheroes/widgets/superhero_card.dart';
 
@@ -688,25 +689,39 @@ class BiographyField extends StatelessWidget {
   }
 }
 
-// @override
-// Widget build(BuildContext context) {
-//   return Container(
-//     alignment: Alignment.topRight,
-//     // mainAxisSize: MainAxisSize.min,
-//     // mainAxisAlignment: MainAxisAlignment.end,
-//     // crossAxisAlignment: CrossAxisAlignment.end,
-//     child: Container(
-//       color: fieldColor,
-//       child: Text(
-//         fieldText,
-//         textAlign: TextAlign.end,
-//         style: TextStyle(
-//           fontWeight: FontWeight.w700,
-//           fontSize: 10,
-//           color: SuperheroesColors.text,
-//         ),
-//       ),
-//     ),
-//   );
-// }
-// }
+
+
+class AlignmentWidget extends StatelessWidget {
+  final AlignmentInfo alignmentInfo;
+  final BorderRadius borderRadius;
+  const AlignmentWidget({Key? key,
+    required this.alignmentInfo,
+    required this.borderRadius})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RotatedBox(
+      quarterTurns: 1,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 6),
+        height: 24,
+        width: 70,
+
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: alignmentInfo.color,
+          borderRadius: borderRadius,
+        ),
+        child: Text(
+          alignmentInfo.name.toUpperCase(),
+          style: TextStyle(
+            color: SuperheroesColors.text,
+            fontWeight: FontWeight.w700,
+            fontSize: 10,
+          ),
+        ),
+      ),
+    );
+  }
+}
