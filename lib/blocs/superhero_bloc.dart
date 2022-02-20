@@ -17,7 +17,6 @@ class SuperheroBloc {
       BehaviorSubject<SuperheroPageState>();
   /// 0. создаем переменную _superheroPageStateSubject
 
-
   final superheroSubject = BehaviorSubject<Superhero>();
   // final observeSuperheroPageState = BehaviorSubject<SuperheroPageState>();  ///
   StreamSubscription? getFromFavoritesSubscription;
@@ -42,20 +41,24 @@ class SuperheroBloc {
         ///    4. После того как заходим на страницу супергероя смотрим, сохранен ли
         ///       этот супергерой в избранном или нет:
         ///        4.1. Если не сохранен, выдаем состояние SuperheroPageState.loading
-        ///        4.2. Если сохранен, выдаем состояние SuperheroPageState.loaded
-        if (superhero != null) { /// - если герой сохранен в избранном
+        ///        4.2. Если сохранен, выдаем состояние SuperheroPageState.loaded - если герой сохранен в избранном
+        if (superhero != null) {
           superheroSubject.add(superhero);
-          _superHeroPageStateSubject.add(SuperheroPageState.loaded);///
-               /// 4.1 Если сохранен, выдаем состояние SuperheroPageState.loaded
-        } else {      ///  - если герой не сохранен в избранном
-          _superHeroPageStateSubject.add(SuperheroPageState.loading);///
-        }     /// 4.2 Если не сохранен, выдаем состояние SuperheroPageState.loading
-        requestSuperhero();
+          _superHeroPageStateSubject.add(SuperheroPageState.loaded);
+          /// 4.1 Если сохранен, выдаем состояние SuperheroPageState.loaded- если герой не сохранен в избранном
+        } else {
+          _superHeroPageStateSubject.add(SuperheroPageState.loading);
+          /// 4.2 Если не сохранен, выдаем состояние SuperheroPageState.loading
+        }
+
+        requestSuperhero(superhero == null);  /// 5/1
+
       },
       onError: (error, stackTrace) =>
           print('Error happened in removeFromFavorites: $error, $stackTrace'),
     );
   }
+
 
   void addToFavorite() {
     final superhero = superheroSubject
@@ -124,36 +127,71 @@ class SuperheroBloc {
   // }
   //
 
-  void requestSuperhero() {
-    requestSubscription?.cancel();
-    requestSubscription = request().asStream().listen(
-      (superhero) {
+  //
+  // void getFromFavorites() {
+  //   getFromFavoritesSubscription?.cancel();
+  //   getFromFavoritesSubscription = FavoriteSuperheroesStorage.getInstance()
+  //       .getSuperhero(id)
+  //       .asStream()
+  //       .listen(
+  //         (superhero) {
+  //       ///    4. После того как заходим на страницу супергероя смотрим, сохранен ли
+  //       ///       этот супергерой в избранном или нет:
+  //       ///        4.1. Если не сохранен, выдаем состояние SuperheroPageState.loading
+  //       ///        4.2. Если сохранен, выдаем состояние SuperheroPageState.loaded
+  //       if (superhero != null) { /// - если герой сохранен в избранном
+  //         superheroSubject.add(superhero);
+  //         _superHeroPageStateSubject.add(SuperheroPageState.loaded);///
+  //         /// 4.1 Если сохранен, выдаем состояние SuperheroPageState.loaded
+  //       } else {      ///  - если герой не сохранен в избранном
+  //         _superHeroPageStateSubject.add(SuperheroPageState.loading);///
+  //       }     /// 4.2 Если не сохранен, выдаем состояние SuperheroPageState.loading
+  //       requestSuperhero();
+  //     },
+  //     onError: (error, stackTrace) =>
+  //         print('Error happened in removeFromFavorites: $error, $stackTrace'),
+  //
+  //   );
+  // }
+
+
+
+  void requestSuperhero(final bool InFavorites) {                       ///5/2
+
+    if (InFavorites) {                                                 ///5/3
+      requestSubscription?.cancel();
+      requestSubscription = request().asStream().listen((superhero) {
         superheroSubject.add(superhero);
-        _superHeroPageStateSubject.add(SuperheroPageState.loaded);///
-        ///    7. Если загрузка из сети закончилась без ошибки, выдаем состояние на SuperheroPageState.loaded
-      },
-      onError: (error, stackTrace) {
+        _superHeroPageStateSubject.add(SuperheroPageState.loaded);
+        ///    7. Если загрузка из сети закончилась без ошибки,
+        ///    выдаем состояние на SuperheroPageState.loaded
+      }, onError: (error, stackTrace) {
         print('Error happened in requestSuperhero: $error, $stackTrace');
-        _superHeroPageStateSubject.add(SuperheroPageState.error);///
-        /// 6. Если загрузка из сети закончилась с ошибкой, но текущий супергерой не
-        /// доступен нам из избранного, выдаем состояние SuperheroPageState.error.
+
+        ///    5. Если загрузка из сети закончилась с ошибкой и текущий супергерой
+        ///       доступен нам из избранного (то есть раньше уже выдали состояние
+        ///       SuperheroPageState.loaded), не выдаем никакого дополнительного состояния.
+
+        _superHeroPageStateSubject.add(SuperheroPageState.error);
+
+        /// 6. Если загрузка из сети закончилась с ошибкой, но текущий супергерой
+        /// не доступен нам из избранного, выдаем состояние SuperheroPageState.error.
       },
-    );
+      );
+    }                                                                 ///5/3
   }
-  ///    5. Если загрузка из сети закончилась с ошибкой и текущий супергерой
-  ///       доступен нам из избранного (то есть раньше уже выдали состояние
-  ///       SuperheroPageState.loaded), не выдаем никакого дополнительного состояния.
 
+  Stream<SuperheroPageState> observeSuperheroPageState() {
+    /// 2
+    return _superHeroPageStateSubject.distinct();
 
-
-  Stream<SuperheroPageState> observeSuperheroPageState() {      /// 2
-    return _superHeroPageStateSubject.distinct();              /// 8
+    /// 8
   }
+
   /// 2. В SuperheroBloc добавить метод observeSuperheroPageState(), в котором возвращать текущее состояние.
   /// 3. Начального состояния быть не должно.
   ///       8. Фильтровать повторяющиеся значения. То есть не выдавать в методе
   ///       observeSuperheroPageState() SuperheroPageState.loaded (или SuperheroPageState.error) два раза подряд
-
 
   Future<Superhero> request() async {
     // await Future.delayed(Duration(seconds: 1));
@@ -184,19 +222,18 @@ class SuperheroBloc {
     addToFavoriteSubscription?.cancel();
     removeFromFavoriteSubscription?.cancel();
     superheroSubject.close();
-    _superHeroPageStateSubject.close();  /// закрываем
+    _superHeroPageStateSubject.close();
+
+    /// закрываем
   }
 }
 
-enum SuperheroPageState { /// 1. Создать enum SuperheroPageState с тремя значениями: loading, loaded, error
+enum SuperheroPageState {
+  /// 1. Создать enum SuperheroPageState с тремя значениями: loading, loaded, error
   loading,
   loaded,
   error
 }
-
-
-
-
 
 //
 // Stream<SuperheroPageState> observeSuperheroPageState() async* {     /// добавить метод
